@@ -57,43 +57,11 @@ cd apex-token-portal
 ### 2. Install Dependencies
 ```bash
 # Create and activate a virtual environment
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate  # On Windows use: venv\Scripts\activate
 
 # Install the application packages
 pip install -r requirements.txt
-```
-
-### 3. Configure Credentials & Environment Variables
-The application looks for application_default_credentials.json in the project root for Google Cloud Storage authentication. Additionally, sensitive credentials can be customized via environment variables prior to launching the application.
-
-Run the following commands in your terminal (replace placeholders with actual values if overriding default settings):
-
-**On macOS / Linux:**
-```bash
-export SECRET_KEY="your-session-cookie-encryption-key"
-export PB_BASE_URL="https://unf.wavelynxtech.com/api"
-export PB_COLLECTION_ID="your_collection_id"
-export PB_ADMIN_TOKEN="your_pocketbase_admin_auth_token_string"
-export GOOGLE_CLOUD_PROJECT="erebus-257721"
-```
-
-**On Windows (Command Prompt):**
-```bash
-set SECRET_KEY="your-session-cookie-encryption-key"
-set PB_BASE_URL="https://unf.wavelynxtech.com/api"
-set PB_COLLECTION_ID="your_collection_id"
-set PB_ADMIN_TOKEN="your_pocketbase_admin_auth_token_string"
-set GOOGLE_CLOUD_PROJECT="erebus-257721"
-```
-
-**On Windows (PowerShell):**
-```bash
-$env:SECRET_KEY="your-session-cookie-encryption-key"
-$env:PB_BASE_URL="https://unf.wavelynxtech.com/api"
-$env:PB_COLLECTION_ID="your_collection_id"
-$env:PB_ADMIN_TOKEN="your_pocketbase_admin_auth_token_string"
-$env:GOOGLE_CLOUD_PROJECT="erebus-257721"
 ```
 
 ## Usage & Workflow
