@@ -10,6 +10,7 @@ An automated configuration management portal and asset compilation pipeline buil
 * **PocketBase Cache Layer:** Bypasses compilation and serves cached tokens if an active token is found inside PocketBase.
 * **Dynamic Content Syncing:** Uploads generated partial configurations to GCS while maintaining a background status worker (background_pipeline_worker) tracking compile lifecycles.
 * **Integrated API Clients:** Uses native Python clients to handle authentication, CSV uploads, pipeline builds, and token generation via REST APIs.
+* **TCI & TRA Mode Generation:** Constructs customized terminal configuration INI partials combining Terminal IDs with a TRA Mode state toggle (`terminal_info = 0x83` for ON, `0x00` for OFF).
 * **Unified Visual Presentation:** Features an interface (loading.html and polling /status/<filename_stem>) that handles newly compiled tokens and cached lookups.
 
 ---
@@ -38,7 +39,7 @@ apex-token-portal/
 │   ├── CLTK3.csv
 │   └── ...
 ├── utils/
-│   ├── ini_builder.py                # Constructs partial INI files from feature web forms
+│   ├── ini_builder.py                # Constructs partial INI files from feature web forms and TCI/TRA inputs
 ├── templates/                        # Jinja2 HTML templates
 └── static/                           # CSS stylesheets and layout styling
 ```
