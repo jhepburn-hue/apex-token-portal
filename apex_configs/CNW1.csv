@@ -1,0 +1,72 @@
+Newton-Wellesley Hospital,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CNW1,,,,Card Type,50D4
+STEP 1: Hardware,,,,,Bitstream,W36-8
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,31
+-2WS,No,No,No,,Starting Badge,"26,000,000"
+-3WS,Yes,Yes,Yes,,Notes,
+-6WS,No,No,No,,Same number on both Prox/Leaf sides of card.,
+-7WS,No,No,No,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,,
+-7FM,No,No,No,,Part Numbers,
+,,,,,Cards: 50d8-Lk10031 = DESFire EV2 LEAF Smart Cards with NWH custom keys and Partner's Common keys,
+MCLP,ET10,ET20,ET25,,,
+-7FM,No,No,No,,,
+,,,,,Notes/Other Products,
+STEP 2: AV + Output Formats,,,,,"Newton-Wellesley Hospital is part of the Partner's Hospital transition strategy. Part of Lk10031 is unique to MGH, and part is common to other Partner's Hospitals.
+
+Kc1 - Kc8: Unique NWH keys
+
+Kc9 - Kc16: Common Partner's Hospital keys
+
+Reader's programmed with CNW1 will only have Kc1 (NWH unique). They will NOT have Kc9 (common Partner's key)",
+Wiegand/OSDP,,,,,,
+Idle LED,,Red,,,,
+Credential Report LED,,Green,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 3: HF,,,,,,
+Leaf Application,,Leaf CC,,,,
+Other Custom HF Application,,None,,,,
+"Custom
+Application
+Notes",Lk10031,,,,,
+,,,,,,
+,,,,,,
+STEP 4: CSN,,,,,,
+MFC CSN,,Off,,,,
+EV1/EV2 CSN,,Off,,,,
+iClass CSN,,Off,,,,
+ISO15693 CSN,,Off,,,,
+ISO14443A CSN,,Off,,,,
+STEP 5: LF,,,,,,
+FSK Prox,,On,,,,
+ASK Prox,,On,,,,
+Prox Filter,,,,,,
+Prox Filter,,On,,,,
+"Prox
+Filter
+Description","Filter out: Low frequency credentials of W36-8 format, FC of 31, BID's greater than or equal to 2,000,000. 
+
+Note: This should filter out all new Partner's hospital LF credentials",,,,,
+,,,,,,
+,,,,,,
+STEP 6: Mobile,,,,,,
+BLE Advertising Config,,WaveLynx,,,,
+BLE Functionality,,Disabled,,,,
+NFC Functionality,,Disabled,,,,
+Mobile Keyset,,WaveLynx Transport,,,,
+Legacy Credentials (Symmetry Blue),,Off,,,,
+Transport Mode,,On,,,,
+Mobile Notes,,,,,,
+STEP 7: Part Numbers,,,,,,
+"Assigned 
+Part Numbers","CNW1-LK10031-POC1
+
+If CNW2-LK10031-POC1 is approved by the customer, CNW1 is approved aswell.",,,,,

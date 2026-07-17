@@ -1,0 +1,76 @@
+Tenet Healthcare,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CTH1-Lk10022,,,,Card Type,Dual-tech Leaf Cc + Prox
+STEP 1: Hardware,,,,,Bitstream,W37-4
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,21
+-2WS,No,No,No,,Starting Badge,"30,000"
+-3WS,No,No,No,,Notes,
+-6WS,No,No,No,,"Dual Tech Leaf Cc + Prox
+LEAF 3.0",
+-7WS,Yes,Yes,Yes,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,,
+-7FM,No,No,No,,Part Numbers,
+,,,,,50d4-lk10022,
+MCLP,ET10,ET20,ET25,,,
+-7FM,No,No,No,,,
+,,,,,Notes/Other Products,
+STEP 2: AV + Output Formats,,,,,"This configuration should be based off of the 
+default AMAG config as these will be installed 
+by AMAG.
+
+The BLE will advertise as AMAG and work with the Symmetry Blue app until keys are rolled.
+
+NOTE: As of Nov 22, 2019 this configuration
+includes custom LEAF Cc keys.",
+Wiegand/OSDP,,,,,,
+Idle LED,,Off,,,,
+Credential Report LED,,Green,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 3: HF,,,,,,
+Leaf Application,,Leaf CC,,,,
+Other Custom HF Application,,None,,,,
+"Custom
+Application
+Notes",Lk10022,,,,,
+,,,,,,
+,,,,,,
+STEP 4: CSN,,,,,,
+MFC CSN,,Off,,,,
+EV1/EV2 CSN,,Off,,,,
+iClass CSN,,Off,,,,
+ISO15693 CSN,,Off,,,,
+ISO14443A CSN,,Off,,,,
+STEP 5: LF,,,,,,
+FSK Prox,,On,,,,
+ASK Prox,,On,,,,
+Prox Filter,,,,,,
+Prox Filter,,On,,,,
+"Prox
+Filter
+Description",Filter W37-4 FAC: 21,,,,,
+,,,,,,
+,,,,,,
+STEP 6: Mobile,,,,,,
+BLE Advertising Config,,AMAG,,,,
+BLE Functionality,,Admin + Custom Credential,,,,
+NFC Functionality,,Disabled,,,,
+Mobile Keyset,,AMAG Transport,,,,
+Legacy Credentials (Symmetry Blue),,On,,,,
+Transport Mode,,Off,,,,
+Mobile Notes,,,,,,
+STEP 7: Part Numbers,,,,,,
+"Assigned 
+Part Numbers",ETXX-7WS-LAM-CTH1-Lk10022,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+JS-04/09/2021: 2.4.2.0 FW MyPass iOS enabled by misstake. 3.0.0.0 iOS MyPass Disabled,,,,,,

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="text-align: center; padding: 40px 20px;">
+  {% if cached %}
+    <span class="badge" style="background: #1e293b; color: var(--accent-2); margin-bottom: 15px;">Token Found in Cache</span>
+  {% else %}
+    <span class="badge" style="background: #14532d; color: var(--accent); margin-bottom: 15px;">New Configuration Compiled</span>
+  {% endif %}
+
+  <h2>Apex Token</h2>
+  <p class="desc">Use this token on Configure to update your readers.</p>
+  
+  <div style="background: #0b1222; border: 1px solid var(--border); padding: 18px; border-radius: 12px; font-family: monospace; font-size: 22px; color: #ffffff; letter-spacing: 1px; margin: 25px auto; max-width: 600px; word-break: break-all; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
+    {{ token }}
+  </div>
+
+  <div class="actions" style="justify-content: center; margin-top: 20px;">
+    <a href="{{ url_for('index') }}" class="btn primary">← Process Next Request</a>
+  </div>
+</div>
+{% endblock %}

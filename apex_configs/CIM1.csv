@@ -1,0 +1,80 @@
+IBM,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CIM1-Lk10003,,,,Card Type,50D4 (LEAF / ASK)
+STEP 1: Hardware,,,,,Bitstream,
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,
+-2WS,No,No,No,,Starting Badge,
+-3WS,No,No,No,,Notes,
+-6WS,No,No,No,,"Dual Technology EV2/ASK:
+- Leaf CC EV2 application (IBM custom keyset).
+- Standard ASK
+- Identical 12 digit ASK ID encoded on both sides of credential.",
+-7WS,Yes,Yes,Yes,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,,
+-7FM,Yes,Yes,Yes,,Part Numbers,
+,,,,,50D4-Lk10003,
+MCLP,ET10,ET20,ET25,,,
+-7FM,No,No,No,,,
+,,,,,Notes/Other Products,
+STEP 2: AV + Output Formats,,,,,"Report CSN in CSN_4002 format and CSN_5002 format
+
+This configuration was formerly U002. No configuration change, the name was updated to the latest naming structure when they registered their LEAF keyset.
+
+
+BLE uses AMAG Symmetry Mobile application, it won't work on Symmetry Blue
+
+
+NOTE: The only difference between CIM1 and CIM2 is CIM2 doesn't read any CSN's. CIM1 is no longer being used going forward (9/30/2021)",
+Wiegand/OSDP,,,,,,
+Idle LED,,Red,,,,
+Credential Report LED,,Green,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 3: HF,,,,,,
+Leaf Application,,Leaf CC,,,,
+Other Custom HF Application,,None,,,,
+"Custom
+Application
+Notes",Lk10003,,,,,
+,,,,,,
+,,,,,,
+STEP 4: CSN,,,,,,
+MFC CSN,,On,,,,
+EV1/EV2 CSN,,On,,,,
+iClass CSN,,Off,,,,
+ISO15693 CSN,,Off,,,,
+ISO14443A CSN,,Off,,,,
+STEP 5: LF,,,,,,
+FSK Prox,,Off,,,,
+ASK Prox,,On,,,,
+Prox Filter,,,,,,
+Prox Filter,,Off,,,,
+"Prox
+Filter
+Description",,,,,,
+,,,,,,
+,,,,,,
+STEP 6: Mobile,,,,,,
+BLE Advertising Config,,WaveLynx,,,,
+BLE Functionality,,Admin + Credentials,,,,
+NFC Functionality,,Disabled,,,,
+Mobile Keyset,,AMAG Transport,,,,
+Legacy Credentials (Symmetry Blue),,Off,,,,
+Transport Mode,,On,,,,
+Mobile Notes,,,,,,
+STEP 8: Part Numbers,,,,,,
+"Assigned 
+Part Numbers","ETxx-7WS-CIM1-Lk10003
+ETxx-7FM-CIM1-Lk10003",,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+"JB - 10/20/2021 - Checking old FW it seemed some of the documention was incorrect. Changed the BLE behavior to reflect the configuration old and new. The configuration used to work with Symmetry Blue and report as ETHS. This was updated in the doc. When MyPass was released, the Symmetry Blue as default feature was removed from configurations with Custom Keys. The configuration should work with the AMAG Symmetry Mobile app",,,,,,

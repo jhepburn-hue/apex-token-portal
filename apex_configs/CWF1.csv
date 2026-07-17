@@ -1,0 +1,68 @@
+Wells Fargo,,,,,
+End User Configuration Form,,,,,Card Details
+Config Name,CWF1,,,,Card Type
+STEP 1: Hardware,,,,,Bitstream
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code
+-2WS,No,No,No,,Starting Badge
+-3WS,No,No,No,,Notes
+-6WS,Yes,Yes,Yes,,
+-7WS,No,No,No,,
+,,,,,
+F2F,ET10,ET20,ET25,,
+-7FM,No,No,No,,Part Numbers
+,,,,,
+MCLP,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,Notes/Other Products
+STEP 2: AV + Output Formats,,,,,They are assigned LK10020 but have not enabled that key. You can currently find their proprietary credentials in that box though
+Wiegand/OSDP,,,,,
+Idle LED,,Red,,,
+Credential Report LED,,Green,,,
+Beeper,,On,,,
+Keypad Format,,8-bit,,,
+Tamper Monitoring,,On,,,
+F2F,,,,,
+Casi Output Format,,CASI-4002,,,
+Supervision State,,2-State,,,
+Tamper Monitoring,,On,,,
+STEP 3: HF,,,,,
+Leaf Application,,None,,,
+Other Custom HF Application,,Custom EV1,,,
+"Custom
+Application
+Notes",Wells Fargo NEXpacs smart card app supported,,,,
+,,,,,
+,,,,,
+STEP 4: CSN,,,,,
+MFC CSN,,Off,,,
+EV1/EV2 CSN,,Off,,,
+iClass CSN,,Off,,,
+ISO15693 CSN,,Off,,,
+ISO14443A CSN,,Off,,,
+STEP 5: LF,,,,,
+FSK Prox,,Off,,,
+ASK Prox,,Off,,,
+Prox Filter,,,,,
+Prox Filter,,Off,,,
+"Prox
+Filter
+Description",,,,,
+,,,,,
+,,,,,
+STEP 6: Mobile,,,,,
+BLE Advertising Config,,WaveLynx,,,
+BLE Functionality,,Disabled,,,
+NFC Functionality,,Disabled,,,
+Mobile Keyset,,WaveLynx Transport,,,
+Legacy Credentials (Symmetry Blue),,Off,,,
+Transport Mode,,On,,,
+Mobile Notes,,,,,
+STEP 7: Part Numbers,,,,,
+"Assigned 
+Part Numbers",,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+,,,,,
+JB 2/18/2021 - Noticed the sheet misrepresented the configuration for CSN behavior (All CSN's should be disabled). This was fixed to represent the configuration,,,,,

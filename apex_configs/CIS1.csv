@@ -1,0 +1,73 @@
+ISONAS,,,,,
+End User Configuration Form,,,,,Card Details
+Config Name,CIS1,,,,Card Type
+STEP 1: Hardware,,,,,Bitstream
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code
+-2WS,No,No,No,,Starting Badge
+-3WS,No,No,No,,Notes
+-6WS,No,No,No,,
+-7WS,Yes,Yes,Yes,,
+,,,,,
+F2F,ET10,ET20,ET25,,
+-7FM,No,No,No,,Part Numbers
+,,,,,
+MCLP,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,Notes/Other Products
+STEP 2: AV + Output Formats,,,,,"Raw data Wiegand transmit of ISONAS proprietary 125 Khz proximity card data (96 bits) AC26 test card
+
+This configuration only has Wiegand communication. NO OSDP!!!
+
+All ISO14443A CSN reads transmit a 4 byte (32 bit) value.
+
+PICO15693 CSN reads transmit an 8 byte (64 bit) value.
+
+3.1.0.0 FW ONLY
+"
+Wiegand/OSDP,,,,,
+Idle LED,,Red,,,
+Credential Report LED,,Green,,,
+Beeper,,On,,,
+Keypad Format,,8-bit,,,
+Tamper Monitoring,,On,,,
+F2F,,,,,
+Casi Output Format,,CASI-4002,,,
+Supervision State,,2-State,,,
+Tamper Monitoring,,On,,,
+STEP 3: HF,,,,,
+Leaf Application,,Leaf Si,,,
+Other Custom HF Application,,None,,,
+"Custom
+Application
+Notes",,,,,
+,,,,,
+,,,,,
+STEP 4: CSN,,,,,
+MFC CSN,,On,,,
+EV1/EV2 CSN,,On,,,
+iClass CSN,,On,,,
+ISO15693 CSN,,Off,,,
+ISO14443A CSN,,On,,,
+STEP 5: LF,,,,,
+FSK Prox,,On,,,
+ASK Prox,,Off,,,
+Prox Filter,,,,,
+Prox Filter,,Off,,,
+"Prox
+Filter
+Description",,,,,
+,,,,,
+,,,,,
+STEP 6: Mobile,,,,,
+BLE Advertising Config,,ISONAS,,,
+BLE Functionality,,Admin + Custom Credential,,,
+NFC Functionality,,Disabled,,,
+Mobile Keyset,,Custom,,,
+Legacy Credentials (Symmetry Blue),,On,,,
+Transport Mode,,Off,,,
+Mobile Notes,"ISONAS has a custom FW image for BLE. (1.6.0)
+
+",,,,
+STEP 7: Part Numbers,,,,,
+"Assigned 
+Part Numbers",,,,,

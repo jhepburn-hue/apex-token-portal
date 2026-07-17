@@ -1,0 +1,14 @@
+# Python environment
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Temporary files & keys
+/tmp/
+application_default_credentials.json
+
+# IDE settings
+.vscode/
+.idea/
+.DS_Store

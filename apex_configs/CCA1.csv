@@ -1,0 +1,69 @@
+Vericode (CA Technologies),,,,,,,,,,,
+End User Configuration Form,,,,,Card Details,,,,,,
+Config Name,CCA1,,,,Card Type,,,,,,
+STEP 1: Hardware,,,,,Bitstream,W35-0,,,,,
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,55,,,,,
+-2WS,No,No,No,,Starting Badge,,,,,,
+-3WS,Yes,Yes,Yes,,Notes,,,,,,
+-6WS,Yes,Yes,Yes,,,,,,,,
+-7WS,Yes,Yes,Yes,,,,,,,,
+,,,,,,,,,,,
+F2F,ET10,ET20,ET25,,,,,,,,
+-7FM,No,No,No,,Part Numbers,,,,,,
+,,,,,,,,,,,
+MCLP,ET10,ET20,ET25,,,,,,,,
+-7FM,No,No,No,,,,,,,,
+,,,,,Notes/Other Products,,,,,,
+STEP 2: AV + Output Formats,,,,,Standard CWL1 configuration besides the prox filter.,,,,,,
+Wiegand/OSDP,,,,,,,,,,,
+Idle LED,,Red,,,,,,,,,
+Credential Report LED,,Green,,,,,,,,,
+Beeper,,On,,,,,,,,,
+Keypad Format,,8-bit,,,,,,,,,
+Tamper Monitoring,,On,,,,,,,,,
+F2F,,,,,,,,,,,
+Casi Output Format,,CASI-4002,,,,,,,,,
+Supervision State,,2-State,,,,,,,,,
+Tamper Monitoring,,On,,,,,,,,,
+STEP 3: HF,,,,,,,,,,,
+Leaf Application,,Leaf Si,,,,,,,,,
+Other Custom HF Application,,None,,,,,,,,,
+"Custom
+Application
+Notes",,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+STEP 4: CSN,,,,,,,,,,,
+MFC CSN,,On,,,,,,,,,
+EV1/EV2 CSN,,On,,,,,,,,,
+iClass CSN,,On,,,,,,,,,
+ISO15693 CSN,,On,,,,,,,,,
+ISO14443A CSN,,On,,,,,,,,,
+STEP 5: LF,,,,,,,,,,,Card Type: ISO14443A-4
+FSK Prox,,On,,,,,,,,,"Card Sub Type: Mifare DESFire legacy, EV1, or EV2"
+ASK Prox,,On,,,,,,,,,Manufacturer: NXP Semiconductors
+Prox Filter,,,,,,,,,,,UID: 043603BA547280
+Prox Filter,,On,,,,,,,,,SAK: 20
+"Prox
+Filter
+Description",Filter 35 bit C-1000 (W35-0) FSK Prox cards with FAC = 55,,,,,,,,,,ATQA: 4403
+,,,,,,,,,,,Protocol Activation Level Acquired
+,,,,,,,,,,,Historical Bytes: 80
+STEP 6: Mobile,,,,,,,,,,,Failed to Get EV1/2 Metrics (FAILURE)
+BLE Advertising Config,,WaveLynx,,,,,,,,,Failed to Get EV1/2 Metrics (FAILURE)
+BLE Functionality,,Admin + MyPass,,,,,,,,,Failed to Get EV1/2 Metrics (FAILURE)
+NFC Functionality,,MyPass,,,,,,,,,
+Mobile Keyset,,WaveLynx Transport,,,,,,,,,
+Legacy Credentials (Symmetry Blue),,Off,,,,,,,,,
+Transport Mode,,On,,,,,,,,,
+Mobile Notes,,,,,,,,,,,
+STEP 7: Part Numbers,,,,,,,,,,,
+"Assigned 
+Part Numbers",,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+,,,,,,,,,,,
+This document was created on 9/14/2020 based off of the CCA1 Reader Configuration Options CA Tech Vericode 01-25-2019 document,,,,,,,,,,,
+7/11/2022 ND: Added support for -3WS and -6WS ,,,,,,,,,,,

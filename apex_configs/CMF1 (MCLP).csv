@@ -1,0 +1,89 @@
+MidFirst Bank,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CMF1-Lk10016,,,,Card Type,Dual-Tech Prox/EV2
+STEP 1: Hardware,,,,,Bitstream,W37-4
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,11
+-2WS,No,No,No,,Starting Badge,1100
+-3WS,No,No,No,,Notes,
+-6WS,No,No,No,,,
+-7WS,No,No,No,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,,
+-7FM,No,No,No,,Part Numbers,
+,,,,,"50D8-Lk10016
+939M-KP-CMF1-LK10016
+939M-CMF1-LK10016
+929M-CMF1-LK10016",
+MCLP,ET10,ET20,ET25,,,
+-7FM,Yes,Yes,Yes,,,
+,,,,,Notes/Other Products,
+STEP 2: AV + Output Formats,,,,,"This configuration should be based off of the 
+default AMAG config as these will be installed 
+by AMAG.
+
+The BLE will advertise as AMAG and work with the Symmetry Blue app until keys are rolled.
+
+
+",
+Wiegand/OSDP,,,,,,
+Idle LED,,Red,,,,
+Credential Report LED,,Green,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 3: HF,,,,,,
+Leaf Application,,Leaf CC,,,,
+Leaf Keyset Notes,,Generated and managed by WL,,,,
+Other Custom HF Application,,None,,,,
+"Custom
+Application
+Notes",Lk10016,,,,,
+,,,,,,
+,,,,,,
+STEP 4: CSN,,,,,,
+MFC CSN,,Off,,,,
+EV1/EV2 CSN,,Off,,,,
+iClass CSN,,Off,,,,
+ISO15693 CSN,,Off,,,,
+ISO14443A CSN,,Off,,,,
+STEP 5: LF,,,,,,
+FSK Prox,,On,,,,
+ASK Prox,,On,,,,
+Prox Filter,,,,,,
+Prox Filter,,On,,,,
+"Prox
+Filter
+Description","Filter 37-4, FC 11.",,,,,
+,,,,,,
+,,,,,,
+STEP 6: Mobile,,,,,,
+BLE Advertising Config,,AMAG,,,,
+BLE Functionality,,Admin + Custom Credential,,,,
+NFC Functionality,,Disabled,,,,
+Mobile Keyset,,AMAG Transport,,,,
+Legacy Credentials (Symmetry Blue),,On,,,,
+Transport Mode,,Off,,,,
+Mobile Notes,,,,,,
+STEP 8: Part Numbers,,,,,,
+"Assigned 
+Part Numbers","WaveLynx P/N
+ETXX-7FM-LAM1-CMF1-Lk10016
+
+AMAG P/N
+939M-KP-CMF1-LK10016
+939M-CMF1-LK10016
+929M-CMF1-LK10016",,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+,,,,,,
+CC Updated on 2/11/20 - Added WS Versions,,,,,,
+JB Updated on 10/6/2021 - Removed WS versions. They were added because Midfirst wanted to configure CAM1 readers they bought in a pinch during Covid and later update them to the matching configuration. They later decided not to configure them and didn't purchase the config card. They have only ever ordered MCLP readers.,,,,,,

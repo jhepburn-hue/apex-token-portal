@@ -1,0 +1,85 @@
+WaveLynx Test/Sample Configuration,,,,,
+End User Configuration Form,,,,,
+Config Name,SAMPLE1,,,,Notes/Other Products
+Config ID,250,,,,"
+
+Sample Credential Pack 1:
+1 - LEAF Cc Test Fob (W26-0, FC:101, BID:123)
+2 - LEAF Cc Test card (W56-1, FC:32, BID:1000 and 1001)
+
+
+Sample Credential Pack 2:
+1 - LEAF Cc Test Fob (W26-0, FC:101, BID:123)
+1 - LEAF Cc Test card (W56-1, FC:32, BID:1000)
+1 - LEAF Cc Test Dualtech card (HF: W56-1, FC:48, BID:2000) (LF: W36-8, FC:7, BID:2000)
+
+NOTE: These credential packs have never been sent or used. This was just an idea to go along with the SAMPLE1 config. SAMPLE1 has been sent to customers.
+
+
+"
+STEP 1: Hardware,,,,,
+Wiegand/OSDP,ET10,ET20,ET25,,
+-2WS,No,No,No,,
+-3WS,No,No,No,,
+-6WS,No,No,No,,
+-7WS,Yes,Yes,Yes,,
+,,,,,
+F2F,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,
+MCLP,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,
+STEP 2: Custom Keyset,,,,,
+Custom Keyset (LEAF Cc),,Enabled,,,
+Keyset ID (LkXXXXX),,Lk10000,,,
+LEAF Customer Code (Decimal),,254,,,
+STEP 3: AV + Output Formats,,,,,
+Wiegand/OSDP,,,,,
+Idle LED,,Red,,,
+Credential Report LED,,Green,,,
+Beeper,,On,,,
+Keypad Format,,8-bit,,,
+Tamper Monitoring,,On,,,
+F2F,,,,,
+Casi Output Format,,CASI-4002,,,
+Supervision State,,2-State,,,
+Tamper Monitoring,,On,,,
+STEP 4: High Frequency (HF),,,,,
+Leaf Si Application (Kv1),,Leaf Si,,,
+Leaf Cc Application (Kc1),,Leaf Cc,,,
+Other Custom HF Application,,None,,,
+"Custom
+Application
+Notes",Contains Kc1 of Lk10000 and Kv1 of Lk00001,,,,
+,,,,,
+,,,,,
+STEP 5: Card Serial Number (CSN),,,,,
+MFC CSN,,On,Standard,,
+EV1/EV2 CSN,,On,Standard,,
+iClass CSN,,On,Standard,,
+ISO15693 CSN,,On,Standard,,
+ISO14443A CSN,,On,,,
+STEP 6: Low Frequency (LF),,,,,
+FSK Prox,,On,,,
+ASK Prox,,On,,,
+Prox Filter,,,,,
+Prox Filter,,On,,,
+"Prox
+Filter
+Description",Ignores W36-8 format with FC: 7,,,,
+,,,,,
+,,,,,
+STEP 7: Mobile,,,,,
+BLE Advertising Config,,Unique (Differs),,,
+BLE Functionality,,Admin + Credentials,,,
+NFC Functionality,,Enabled,,,
+Mobile Keyset,,Custom,,,
+"Legacy Credentials (Sym Blue, Brivo)",,Off,,,
+Transport Mode,,Off,,,
+ECP DESFire,,Enabled,,,
+ECP TCI,,,,,
+Mobile Notes,Only works with Atrium iOS Mobile demo,,,,
+STEP 8: Part Numbers,,,,,
+"Assigned 
+Part Numbers",,,,,

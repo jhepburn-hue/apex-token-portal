@@ -1,0 +1,74 @@
+Fidelity Investments,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CFA2,,,,Card Type,5024
+STEP 1: Hardware,,,,,Bitstream,W40-3
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,197
+-2WS,No,No,No,,Starting Badge,
+-3WS,No,No,No,,Notes,
+-6WS,Yes,Yes,Yes,,,
+-7WS,Yes,Yes,Yes,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,,
+-7FM,No,No,No,,Part Numbers,
+,,,,,5024-KA90,
+MCLP,ET10,ET20,ET25,,,
+-7FM,No,No,No,,,
+,,,,,Notes/Other Products,
+STEP 2: AV + Output Formats,,,,,"Readers are Wiegand Only.
+
+On start up, the reader reports the following 40 bit message:
+""E2FFFFFFFE""
+
+Reader must be flashed with the Fidelity specific FW hex file and then configured with CFA2
+
+Note: The Leaf Cc card is not currently being used by Fidelity.
+",
+Wiegand/OSDP,,,,,,
+Idle LED,,Green,,,,
+Credential Report LED,,Off,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 3: HF,,,,,,
+Leaf Application,,Leaf CC,,,,
+Other Custom HF Application,,Custom MFC,,,,
+"Custom
+Application
+Notes","Fidelity has their own specific keys. 
+They consist of a Leaf Cc keyset plus a MiFare Classic key.
+The Leaf Cc Keyset is Lk10006. 
+The Mifare Classic Key # is KA90.",,,,,
+,,,,,,
+,,,,,,
+STEP 4: CSN,,,,,,
+MFC CSN,,Off,,,,
+EV1/EV2 CSN,,Off,,,,
+iClass CSN,,Off,,,,
+ISO15693 CSN,,Off,,,,
+ISO14443A CSN,,Off,,,,
+STEP 5: LF,,,,,,
+FSK Prox,,On,,,,
+ASK Prox,,Off,,,,
+Prox Filter,,,,,,
+Prox Filter,,Off,,,,
+"Prox
+Filter
+Description",,,,,,
+,,,,,,
+,,,,,,
+STEP 6: Mobile,,,,,,
+BLE Advertising Config,,Fidelity,,,,
+BLE Functionality,,Admin Only,,,,
+NFC Functionality,,Disabled,,,,
+Mobile Keyset,,WaveLynx Transport,,,,
+Legacy Credentials (Symmetry Blue),,Off,,,,
+Transport Mode,,On,,,,
+Mobile Notes,,,,,,
+STEP 7: Part Numbers,,,,,,
+"Assigned 
+Part Numbers","ETxx-6WS-CFA2
+ETxx-7WS-CFA2",,,,,

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="border-color: var(--error);">
+  <h2 style="color: var(--error);">Pipeline Execution Failed</h2>
+  <p class="desc">An unhandled processing error occurred while compiling your hardware options.</p>
+  
+  <div class="errors">
+    <strong>Error Message:</strong> {{ error }}
+  </div>
+
+  {% if traceback_text %}
+    <pre style="background: #0b1222; color: #94a3b8; padding: 14px; border-radius: 10px; font-size: 12px; overflow-x: auto; border: 1px solid var(--border); margin-top: 15px;">{{ traceback_text }}</pre>
+  {% endif %}
+
+  <div class="actions">
+    <a href="{{ url_for('index') }}" class="btn">Return to Dashboard</a>
+  </div>
+</div>
+{% endblock %}

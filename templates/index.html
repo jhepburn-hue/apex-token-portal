@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h2>Token Generator</h2>
+  <p class="desc">Use this form to generate a token for your Apex readers and the Configure app.</p>
+
+  <form action="{{ url_for('process') }}" method="post" id="apexPortalForm">
+    
+    <div class="form-row">
+      <label for="update_type">Pipeline Intent</label>
+      <select id="update_type" name="update_type" onchange="switchApexView()" required>
+        <option value="">-- Select an Option --</option>
+        <option value="firmware_update">Option 1: Firmware Update</option>
+        <option value="config_update">Option 2: Configuration Update</option>
+        <option value="feature_update">Option 3: Feature Update</option>
+      </select>
+    </div>
+
+    <div id="view_firmware" class="hidden">
+      <div class="form-row">
+        <label for="config_designator">Configuration Designation</label>
+        <input type="text" id="config_designator" name="config_designator" placeholder="e.g., CUP1, CLTK3">
+      </div>
+      <div class="form-row">
+        <label for="current_firmware">Active Reader Firmware</label>
+        <select id="current_firmware" name="current_firmware">
+          <option value="v5.4.1">v5.4.1</option>
+          <option value="v5.4.6">v5.4.6</option>
+          <option value="v5.4.7">v5.4.7</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="view_config" class="hidden">
+      <div class="form-row">
+        <label for="config_designator_update">Configuration Designation</label>
+        <input type="text" id="config_designator_update" name="config_designator_update" placeholder="e.g., CUP1, CLTK3">
+      </div>
+      <div class="form-row">
+        <label for="current_firmware_update">Active Reader Firmware</label>
+        <select id="current_firmware_update" name="current_firmware_update">
+          <option value="v5.4.1">v5.4.1</option>
+          <option value="v5.4.6">v5.4.6</option>
+          <option value="v5.4.7">v5.4.7</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="view_features" class="hidden" style="margin-top: 15px;">
+      <div class="form-row">
+        <label for="current_firmware">Active Reader Firmware</label>
+        <select id="current_firmware" name="current_firmware">
+          <option value="v5.4.1">v5.4.1</option>
+          <option value="v5.4.6">v5.4.6</option>
+          <option value="v5.4.7">v5.4.7</option>
+        </select>
+      </div>
+      
+      <div class="form-group-vertical">
+        <span class="main-label">Anti-Passback</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="anti_passback" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="anti_passback" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">BLE Credentials</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="ble_credentials" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="ble_credentials" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">BLE</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="ble" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="ble" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">Buzzer</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="buzzer" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="buzzer" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">CSN</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="csn" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="csn" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">HF</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="hf" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="hf" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">Idle LED</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="idle_led" value="blue" onclick="singleSelect(this)"> Blue</label>
+          <label><input type="checkbox" name="idle_led" value="green" onclick="singleSelect(this)"> Green</label>
+          <label><input type="checkbox" name="idle_led" value="red" onclick="singleSelect(this)"> Red</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">Keypad Bit</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="keypad_bit" value="4" onclick="singleSelect(this)"> 4</label>
+          <label><input type="checkbox" name="keypad_bit" value="8" onclick="singleSelect(this)"> 8</label>
+          <label><input type="checkbox" name="keypad_bit" value="26" onclick="singleSelect(this)"> 26</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">OSDP Address</span>
+        <div class="checkbox-group">
+          {% for a in range(10) %}
+            <label><input type="checkbox" name="osdp_address" value="{{ a }}" onclick="singleSelect(this)"> {{ a }}</label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">OSDP Baud Rate</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="osdp_baud_rate" value="9600" onclick="singleSelect(this)"> 9600</label>
+          <label><input type="checkbox" name="osdp_baud_rate" value="57600" onclick="singleSelect(this)"> 57600</label>
+          <label><input type="checkbox" name="osdp_baud_rate" value="115200" onclick="singleSelect(this)"> 115200</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">Prox</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="prox" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="prox" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">Tamper</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="tamper" value="enable" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="tamper" value="disable" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top: 25px;">
+      <button class="btn primary" type="submit">Submit Request</button>
+      <button class="btn secondary" type="button" onclick="resetForm()">Clear Form</button>
+    </div>
+  </form>
+</div>
+
+<script>
+function switchApexView() {
+  const selection = document.getElementById('update_type').value;
+  document.getElementById('view_firmware').classList.toggle('hidden', selection !== 'firmware_update');
+  document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
+  document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
+}
+
+function resetForm() {
+  const form = document.getElementById('apexPortalForm');
+  form.reset();
+  switchApexView(); 
+}
+
+function singleSelect(checkbox) {
+    if (checkbox.checked) {
+      const group = document.getElementsByName(checkbox.name);
+      group.forEach(item => {
+        if (item !== checkbox) item.checked = false;
+      });
+    }
+  }
+</script>
+{% endblock %}

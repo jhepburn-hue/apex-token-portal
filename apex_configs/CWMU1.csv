@@ -1,0 +1,91 @@
+Western Michigan University,,,,,,
+End User Configuration Form,,,,,Card Details,
+Config Name,CWMU1,,,,Card Type,51M8
+Config ID,294,,,,Bitstream,W37-6
+STEP 1: Hardware,,,,,Facility Code,29
+Wiegand/OSDP,ET10,ET20,ET25,,Starting Badge,"213,400,100"
+-2WS,No,No,No,,Notes,
+-3WS,No,No,No,,NS2155,
+-6WS,No,No,No,,,
+-7WS,Yes,Yes,Yes,,,
+,,,,,,
+F2F,ET10,ET20,ET25,,Part Numbers,
+-7FM,No,No,No,,,
+,,,,,,
+MCLP,ET10,ET20,ET25,,,
+-7FM,No,No,No,,Notes/Other Products,
+,,,,,"- Using a custom 37-bit format. 
+- Standard Wavelynx packaging
+
+
+# Enable Prox-Filter W37-6 with Badge ID >= 213,400,100
+BS_SET, FILTER , BS_FILTER_LF
+BS_AUG, FILTER , BS_FILTER_FUNC_ME
+BS_SET, NUM_BITS , 37
+BS_FILTER_MASK, 0 , 0x00
+BS_FILTER_MASK, 1 , 0x7F
+BS_FILTER_MASK, 2 , 0xFF
+BS_FILTER_MASK, 3 , 0xFF
+BS_FILTER_MASK, 4 , 0xFE
+
+BS_FILTER_VALUE, 0 , 0x00
+BS_FILTER_VALUE, 1 , 0x19
+BS_FILTER_VALUE, 2 , 0x70
+BS_FILTER_VALUE, 3 , 0x74
+BS_FILTER_VALUE, 4 , 0x48",
+STEP 2: Custom Keyset,,,,,,
+Custom Keyset (LEAF Cc),,Enabled,,,,
+Keyset ID (LkXXXXX),,Lk10149,,,,
+LEAF Customer Code (Decimal),,,,,,
+STEP 3: AV + Output Formats,,,,,,
+Wiegand/OSDP,,,,,,
+Idle LED,,Red,,,,
+Credential Report LED,,Green,,,,
+Beeper,,On,,,,
+Keypad Format,,8-bit,,,,
+Tamper Monitoring,,On,,,,
+F2F,,,,,,
+Casi Output Format,,CASI-4002,,,,
+Supervision State,,2-State,,,,
+Tamper Monitoring,,On,,,,
+STEP 4: High Frequency (HF),,,,,,
+Leaf Si Application (Kv1),,None,,,,
+Leaf Cc Application (Kc1),,Leaf Cc,,,,
+Other Custom HF Application,,None,,,,
+"Custom
+Application
+Notes",,,,,,
+,,,,,,
+,,,,,,
+STEP 5: Card Serial Number (CSN),,,,,,
+MFC CSN,,Off,CSN_32_BIT_MSB,,,
+EV1/EV2 CSN,,Off,CSN_32_BIT_MSB,,,
+iClass CSN,,Off,CSN_32_BIT_MSB,,,
+ISO15693 CSN,,Off,CSN_32_BIT_MSB,,,
+ISO14443A CSN,,Off,,,,
+STEP 6: Low Frequency (LF),,,,,,
+FSK Prox,,On,,,,
+ASK Prox,,On,,,,
+Prox Filter,,,,,,
+Prox Filter,,On,,,,
+"Prox
+Filter
+Description","Ignore Prox W37-6 w/ BID >= 213,400,100",,,,,
+,,,,,,
+,,,,,,
+STEP 7: Mobile,,,,,,
+BLE Advertising Config,,Unique (Differs),,,,
+BLE Functionality,,Admin Only,,,,
+NFC Functionality,,Enabled,,,,
+Mobile Keyset,,Custom,,,,
+"Legacy Credentials (Sym Blue, Brivo)",,Off,,,,
+Transport Mode,,Off,,,,
+ECP DESFire,,Enabled,,,,
+ECP TCI,,020996,,,,
+Apple Meridian Bit Count,,40,,,,
+MiFare2Go,,Enabled,,,,
+MiFare2Go DFNAME,,A00000039656434103F532F000020996,,,,
+Mobile Notes,,,,,,
+STEP 8: Part Numbers,,,,,,
+"Assigned 
+Part Numbers",,,,,,

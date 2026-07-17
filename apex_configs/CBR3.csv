@@ -1,0 +1,96 @@
+Brivo,,,,,,,,,,
+End User Configuration Form,,,,,Card Details,,,,,
+Config Name,CBR3,,,,Card Type,,,,,
+STEP 1: Hardware,,,,,Bitstream,,,,,
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code,,,,,
+-2WS,Yes,No,No,,Starting Badge,,,,,
+-3WS,No,No,No,,Notes,,,,,
+-6WS,Yes,No,No,,,,,,,
+-7WS,Yes,No,No,,,,,,,
+,,,,,,,,,,
+F2F,ET10,ET20,ET25,,,,,,,
+-7FM,No,No,No,,Part Numbers,,,,,
+,,,,,,,,,,
+MCLP,ET10,ET20,ET25,,,,,,,
+-7FM,No,No,No,,,,,,,
+,,,,,Notes/Other Products,,,,,
+STEP 2: AV + Output Formats,,,,,"Must use Brivo Plastics
+Must use 3.0+ HW
+
+LED Control lines:
+- Orange = Blue
+- Blue = Green
+
+Captouch Threshold = 20",,,,,
+Wiegand/OSDP,,,,,,,,,,
+Idle LED,,Red,,,,,,,,
+Credential Report LED,,Green,,,,,,,,
+Beeper,,On,,,,,,,,
+Keypad Format,,8-bit,,,,,,,,
+Tamper Monitoring,,On,,,,,,,,
+F2F,,,,,,,,,,
+Casi Output Format,,CASI-4002,,,,,,,,
+Supervision State,,2-State,,,,,,,,
+Tamper Monitoring,,On,,,,,,,,
+STEP 3: HF,,,,,,,,,,
+Leaf Application,,Leaf Si,,,,,,,,
+Other Custom HF Application,,None,,,,,,,,
+"Custom
+Application
+Notes",,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+STEP 4: CSN,,,,,,,,,,
+MFC CSN,,On,,,,,,,,
+EV1/EV2 CSN,,On,,,,,,,,
+iClass CSN,,On,,,,,,,,
+ISO15693 CSN,,On,,,,,,,,
+ISO14443A CSN,,On,,,,,,,,
+STEP 5: LF,,,,,,,,,,
+FSK Prox,,On,,,,,,,,
+ASK Prox,,On,,,,,,,,
+Prox Filter,,,,,,,,,,
+Prox Filter,,Off,,,,,,,,
+"Prox
+Filter
+Description",,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+STEP 6: Mobile,,,,,,,,,,
+BLE Advertising Config,,Brivo,,,,,,,,
+BLE Functionality,,Admin + Custom Credential,,,,,,,,
+NFC Functionality,,Disabled,,,,,,,,
+Mobile Keyset,,WaveLynx Transport,,,,,,,,
+Legacy Credentials (Symmetry Blue),,On,,,,,,,,
+Transport Mode,,Off,,,,,,,,
+Mobile Notes,"Legacy credential but doesn't use Symmetry Blue.
+
+Use their own mobile app credential.
+
+MyPass should be disabled for future releases but was enabled via NFC on 2.4.2.0
+
+Due to Gen 1.5 limitations, MyPass is enabled for iOS on Gen 1.5 but not NFC",,,,,,,,,
+STEP 7: Part Numbers,,,,,,,,,,
+"Assigned 
+Part Numbers",See Below,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,,,,,,,,,,
+,WL PN,Brivo PN,Description,,,,Wire Color,Orange,Blue,
+,ET10-6WS-CBR2-PCBB,B-BSMF-B,Mullion Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black,,,,Condition,Behavior,Red LED,Green LED
+,ET10-6WS-CBR2-PCBW,B-BSMF-W,Mullion Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White,,,,Rest/ Locked,Blue,Low,High
+,ET20-6WS-CBR2-PCBB,B-BSSF-B,SG Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black,,,,Access Granted,Green,High,Low
+,ET20-6WS-CBR2-PCBW,B-BSSF-W,SG Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White,,,,Access Denied,Red,High,High
+,ET25-6WS-CBR2-PCBB,B-BSKF-B,Keypad Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black,,,,Access Wait,Cyan/ Blue,Low,Pulse
+,ET25-6WS-CBR2-PCBW,B-BSKF-W,Keypad Ethos Reader - 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White,,,,Unlocked,Red/ Green,High,Low Cycle
+,ET10-7WS-CBR2-PCBB,B-BSPMF-B,"Mullion Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black",,,,Lockout,Blue/ Red,Low Cycle,High
+,ET10-7WS-CBR2-PCBW,B-BSPMF-W,"Mullion Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White",,,,Tamper,Blue/ Red,Low Cycle,High
+,ET20-7WS-CBR2-PCBB,B-BSPSF-B,"SG Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black",,,,,,,
+,ET20-7WS-CBR2-PCBW,B-BSPSF-W,"SG Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White",,,,,,,
+,ET25-7WS-CBR2-PCBB,B-BSPKF-B,"Keypad Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics Black",,,,,,,
+,ET25-7WS-CBR2-PCBW,B-BSPKF-W,"Keypad Ethos Reader - 125 kHz, 13.56 MHz and BLE - Brivo Configuration - Brivo Plastics White",,,,,,,

@@ -1,0 +1,62 @@
+WaveLynx (F2F configuration),,,,,
+End User Configuration Form,,,,,Card Details
+Config Name,CF22,,,,Card Type
+STEP 1: Hardware,,,,,Bitstream
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code
+-2WS,No,No,No,,Starting Badge
+-3WS,No,No,No,,Notes
+-6WS,No,No,No,,
+-7WS,No,No,No,,
+,,,,,
+F2F,ET10,ET20,ET25,,
+-7FM,Yes,Yes,Yes,,Part Numbers
+,,,,,
+MCLP,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,Notes/Other Products
+STEP 2: AV + Output Formats,,,,,Report CSN in CSN_4002 format and CSN_5002 format
+Wiegand/OSDP,,,,,
+Idle LED,,Amber,,,
+Credential Report LED,,Off,,,
+Beeper,,On,,,
+Keypad Format,,F2F,,,
+Tamper Monitoring,,On,,,
+F2F,,,,,
+Casi Output Format,,CASI-4002,,,
+Supervision State,,2-State,,,
+Tamper Monitoring,,On,,,
+STEP 3: HF,,,,,
+Leaf Application,,Leaf Si,,,
+Other Custom HF Application,,None,,,
+"Custom
+Application
+Notes",,,,,
+,,,,,
+,,,,,
+STEP 4: CSN,,,,,
+MFC CSN,,On,,,
+EV1/EV2 CSN,,On,,,
+iClass CSN,,On,,,
+ISO15693 CSN,,On,,,
+ISO14443A CSN,,On,,,
+STEP 5: LF,,,,,
+FSK Prox,,On,,,
+ASK Prox,,On,,,
+Prox Filter,,,,,
+Prox Filter,,Off,,,
+"Prox
+Filter
+Description",,,,,
+,,,,,
+,,,,,
+STEP 6: Mobile,,,,,
+BLE Advertising Config,,WaveLynx,,,
+BLE Functionality,,Admin + MyPass,,,
+NFC Functionality,,MyPass,,,
+Mobile Keyset,,WaveLynx Transport,,,
+Legacy Credentials (Symmetry Blue),,Off,,,
+Transport Mode,,On,,,
+Mobile Notes,,,,,
+STEP 7: Part Numbers,,,,,
+"Assigned 
+Part Numbers",,,,,

@@ -1,0 +1,63 @@
+Inovonics,,,,,
+End User Configuration Form,,,,,Card Details
+Config Name,CIN2,,,,Card Type
+STEP 1: Hardware,,,,,Bitstream
+Wiegand/OSDP,ET10,ET20,ET25,,Facility Code
+-2WS,No,No,No,,Starting Badge
+-3WS,No,No,No,,Notes
+-6WS,No,No,No,,
+-7WS,Yes,Yes,Yes,,
+,,,,,
+F2F,ET10,ET20,ET25,,
+-7FM,No,No,No,,Part Numbers
+,,,,,
+MCLP,ET10,ET20,ET25,,
+-7FM,No,No,No,,
+,,,,,Notes/Other Products
+STEP 2: AV + Output Formats,,,,,This configuration behaves the same way as CIN1. CIN1 had HF disabled but the document did not indicate this.
+Wiegand/OSDP,,,,,
+Idle LED,,Off,,,
+Credential Report LED,,Off,,,
+Beeper,,Off,,,
+Keypad Format,,8-bit,,,
+Tamper Monitoring,,On,,,
+F2F,,,,,
+Casi Output Format,,CASI-4002,,,
+Supervision State,,2-State,,,
+Tamper Monitoring,,On,,,
+STEP 3: HF,,,,,
+Leaf Application,,None,,,
+Other Custom HF Application,,None,,,
+"Custom
+Application
+Notes","HF is turned off, they are buying a -7 only because we discontinued -5",,,,
+,,,,,
+,,,,,
+STEP 4: CSN,,,,,
+MFC CSN,,Off,,,
+EV1/EV2 CSN,,Off,,,
+iClass CSN,,Off,,,
+ISO15693 CSN,,Off,,,
+ISO14443A CSN,,Off,,,
+STEP 5: LF,,,,,
+FSK Prox,,On,,,
+ASK Prox,,On,,,
+Prox Filter,,,,,
+Prox Filter,,Off,,,
+"Prox
+Filter
+Description",,,,,
+,,,,,
+,,,,,
+STEP 6: Mobile,,,,,
+BLE Advertising Config,,Custom BLE Firmware,,,
+BLE Functionality,,Custom BLE Firmware,,,
+NFC Functionality,,Disabled,,,
+Mobile Keyset,,N/A,,,
+Legacy Credentials (Symmetry Blue),,N/A,,,
+Transport Mode,,N/A,,,
+Mobile Notes,"Custom Inovonics BLE firmware in Cypress to handle wanderer 
+beacons",,,,
+STEP 7: Part Numbers,,,,,
+"Assigned 
+Part Numbers",ETXX-CIN2,,,,
