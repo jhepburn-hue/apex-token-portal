@@ -13,6 +13,7 @@
         <option value="firmware_update">Option 1: Firmware Update</option>
         <option value="config_update">Option 2: Configuration Update</option>
         <option value="feature_update">Option 3: Feature Update</option>
+        <option value="tra_tci">Option 4: TCI and TRA Mode</option>
       </select>
     </div>
 
@@ -157,6 +158,30 @@
       </div>
     </div>
 
+    <div id="view_tra_tci" class="hidden" style="margin-top: 15px;">
+      <div class="form-row">
+        <label for="tci_input">TCI / Terminal ID</label>
+        <input type="text" id="tci_input" name="tci" placeholder="e.g., 023000">
+      </div>
+
+      <div class="form-group-vertical">
+        <span class="main-label">TRA Mode</span>
+        <div class="checkbox-group">
+          <label><input type="checkbox" name="tra_mode" value="on" onclick="singleSelect(this)"> Enable</label>
+          <label><input type="checkbox" name="tra_mode" value="off" onclick="singleSelect(this)"> Disable</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="current_firmware_tci">Current Reader Firmware</label>
+        <select id="current_firmware_tci" name="current_firmware_tci">
+          <option value="v5.4.1">v5.4.1</option>
+          <option value="v5.4.6">v5.4.6</option>
+          <option value="v5.4.7">v5.4.7</option>
+        </select>
+      </div>
+    </div>
+
     <div class="actions" style="margin-top: 25px;">
       <button class="btn primary" type="submit">Submit Request</button>
       <button class="btn secondary" type="button" onclick="resetForm()">Clear Form</button>
@@ -170,6 +195,7 @@ function switchApexView() {
   document.getElementById('view_firmware').classList.toggle('hidden', selection !== 'firmware_update');
   document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
   document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
+  document.getElementById('view_tra_tci').classList.toggle('hidden', selection !== 'tra_tci');
 }
 
 function resetForm() {

@@ -7,7 +7,7 @@ from pathlib import Path
 from flask import Flask, render_template, request, jsonify
 from google.cloud import storage
 
-from utils.ini_builder import build_partial_ini
+from utils.ini_builder import build_partial_ini, build_tra_tci, TERMINAL_INFO_TRA_ON, TERMINAL_INFO_TRA_OFF
 from forge_client import ForgeClient
 from pocketbase_client import PocketBaseClient
 
@@ -56,7 +56,7 @@ def upload_to_gcs(file_path: Path, update_type: str, version_dir: str) -> str:
     storage_client = storage.Client(project=GCP_PROJECT)
     bucket = storage_client.bucket(BUCKET_NAME)
     
-    if update_type == "feature_update":
+    if update_type in ["feature_update", "tra_tci"]:
         gcs_destination_path = f"forge/{USER_EMAIL}/{version_dir}/partials/{file_path.name}"
     else:
         gcs_destination_path = f"forge/{USER_EMAIL}/{version_dir}/{file_path.name}"
@@ -124,7 +124,7 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                         if update_type == "firmware_update":
                             if "wall_dck" in fname_lower or "wall" in fname_lower:
                                 is_target_file = True
-                        elif update_type in ["config_update", "feature_update"]:
+                        elif update_type in ["config_update", "feature_update", "tra_tci"]:
                             if (query_lower in fname_lower or stem_lower in fname_lower) and "wall" not in fname_lower and "module" not in fname_lower:
                                 is_target_file = True
 
@@ -136,6 +136,8 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                                 token_name = f"{fw_ver} {cfg_name} FIRMWARE"
                             elif update_type == "config_update":
                                 token_name = f"{fw_ver} {cfg_name} PROFILE"
+                            elif update_type == "tra_tci":
+                                token_name = f"{fw_ver} {filename_stem.replace('_', ' ').upper()}"
                             else:
                                 clean_details = filename_stem.replace('_', ' ').title()
                                 clean_details = clean_details.replace('Osdp', 'OSDP').replace('Led', 'LED').replace('OSDP Baud Rate', 'Baud Rate')
@@ -184,6 +186,8 @@ def process():
         raw_version = firmware_options[1] if len(firmware_options) > 1 else (firmware_options[0] if firmware_options else "v5.4.1")
     elif update_type == "firmware_update":
         raw_version = form_data.get("current_firmware") or "v5.4.1"
+    elif update_type == "tra_tci":
+        raw_version = form_data.get("current_firmware_tci") or "v5.4.1"
     else:
         raw_version = form_data.get("current_firmware_update") or "v5.4.1"
         
@@ -202,6 +206,21 @@ def process():
             suffix = "PROFILE" if update_type == "config_update" else "FIRMWARE"
             token_name = f"{fw_ver} {config_designator} {suffix}"
             target_ini_stem = config_designator
+        elif update_type == "tra_tci":
+            tci = form_data.get("tci", "").strip()
+            tra_mode = form_data.get("tra_mode") == "on"
+            
+            if not tci:
+                raise Exception("TCI value is required for Option 4.")
+
+            tra_label = "TRA_ON" if tra_mode else "TRA_OFF"
+            target_ini_stem = f"TCI_{tci}_{tra_label}"
+            token_name = f"{fw_ver} TCI {tci} {tra_label}"
+
+            # Build local INI file using build_tra_tci helper
+            ini_text = build_tra_tci(tci=tci, tra_mode=tra_mode)
+            generated_ini_path = GENERATED_DIR / f"{target_ini_stem}.ini"
+            generated_ini_path.write_text(ini_text, encoding="utf-8")
         else:
             # Generate feature update partial configuration file locally
             default_ini_path = BASE_DIR / "default.ini"
@@ -246,7 +265,7 @@ def process():
             if build_resp.status_code not in [200, 201, 303]:
                 raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
 
-        elif update_type == "feature_update":
+        elif update_type in ["feature_update", "tra_tci"]:
             # Upload partial INI to GCS forge/user/version/partials/
             upload_to_gcs(generated_ini_path, update_type, version_dir)
             generated_ini_path.unlink(missing_ok=True)

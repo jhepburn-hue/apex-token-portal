@@ -4,12 +4,25 @@ import os
 import re
 from pathlib import Path
 
-# Optional import for prox filter calculation if prox_math.py exists
 try:
     from utils.prox_math import generate_hex_codes
 except ImportError:
     generate_hex_codes = None
 
+TERMINAL_INFO_TRA_ON = "0x83"
+TERMINAL_INFO_TRA_OFF = "0x00"
+
+def build_tra_tci(tci: str, tra_mode: bool) -> str:
+    """
+    Builds the INI partial config for Option 4 including TCI and terminal_info hex setting.
+    """
+    terminal_info = TERMINAL_INFO_TRA_ON if tra_mode else TERMINAL_INFO_TRA_OFF
+
+    ini_content = f"""[rfid/hf/app/wallet]
+    terminal_id = "{tci.strip()}"
+    terminal_info = {terminal_info}
+    """
+    return ini_content
 
 def ensure_section(cfg: configparser.ConfigParser, section: str):
     if not cfg.has_section(section):
