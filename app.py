@@ -136,11 +136,10 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                                 token_name = f"{fw_ver} {cfg_name} FIRMWARE"
                             elif update_type == "config_update":
                                 token_name = f"{fw_ver} {cfg_name} PROFILE"
-                            elif update_type == "tra_tci":
-                                token_name = f"{fw_ver} {filename_stem.replace('_', ' ').upper()}"
                             else:
                                 clean_details = filename_stem.replace('_', ' ').title()
                                 clean_details = clean_details.replace('Osdp', 'OSDP').replace('Led', 'LED').replace('OSDP Baud Rate', 'Baud Rate')
+                                clean_details = clean_details.replace('Tci', 'TCI').replace('Tra Off', 'TRA Off').replace('Tra On', 'TRA On')
                                 token_name = f"{fw_ver} {clean_details}"
 
                             # Upload and register via PocketBase Client
@@ -186,8 +185,6 @@ def process():
         raw_version = firmware_options[1] if len(firmware_options) > 1 else (firmware_options[0] if firmware_options else "v5.4.1")
     elif update_type == "firmware_update":
         raw_version = form_data.get("current_firmware") or "v5.4.1"
-    elif update_type == "tra_tci":
-        raw_version = form_data.get("current_firmware_tci") or "v5.4.1"
     else:
         raw_version = form_data.get("current_firmware_update") or "v5.4.1"
         
@@ -206,21 +203,6 @@ def process():
             suffix = "PROFILE" if update_type == "config_update" else "FIRMWARE"
             token_name = f"{fw_ver} {config_designator} {suffix}"
             target_ini_stem = config_designator
-        elif update_type == "tra_tci":
-            tci = form_data.get("tci", "").strip()
-            tra_mode = form_data.get("tra_mode") == "on"
-            
-            if not tci:
-                raise Exception("TCI value is required for Option 4.")
-
-            tra_label = "TRA_ON" if tra_mode else "TRA_OFF"
-            target_ini_stem = f"TCI_{tci}_{tra_label}"
-            token_name = f"{fw_ver} TCI {tci} {tra_label}"
-
-            # Build local INI file using build_tra_tci helper
-            ini_text = build_tra_tci(tci=tci, tra_mode=tra_mode)
-            generated_ini_path = GENERATED_DIR / f"{target_ini_stem}.ini"
-            generated_ini_path.write_text(ini_text, encoding="utf-8")
         else:
             # Generate feature update partial configuration file locally
             default_ini_path = BASE_DIR / "default.ini"

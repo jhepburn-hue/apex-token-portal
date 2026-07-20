@@ -335,6 +335,22 @@ def build_partial_ini(default_ini: Path, out_dir: Path, form: dict) -> Path:
         set_kv(cfg, "tamper", "osdp_reporting_enabled", "false")
         file_name.append("tamper_disabled")
 
+    # 14. TCI and TRA Mode
+    # 14. TCI and TRA Mode
+    tci_value = form.get("tci", "").strip().lower()
+    tra_mode_raw = form.get("tra_mode", "").strip().lower()
+
+    if tci_value:
+        set_kv(cfg, "rfid/hf/app/wallet", "terminal_id", f'"{tci_value}"')
+        file_name.append(f"tci_{tci_value}")
+
+    if tra_mode_raw in ["on", "off"]:
+        tra_mode = tra_mode_raw == "on"
+        terminal_info = TERMINAL_INFO_TRA_ON if tra_mode else TERMINAL_INFO_TRA_OFF
+        
+        set_kv(cfg, "rfid/hf/app/wallet", "terminal_info", terminal_info)
+        file_name.append("tra_on" if tra_mode else "tra_off")
+
     if out_dir.suffix == ".ini":
         out_dir = out_dir.parent
 
