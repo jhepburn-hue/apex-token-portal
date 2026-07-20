@@ -301,8 +301,8 @@ def process():
                 tracking_key = config_designator
 
                 cached_token = pb_client.check_active_token(token_name)
-                if cached_token:
-                    cached_results.append({"config_name": config_designator, "token": cached_token, "cached": True})
+                if all_cached:
+                    return render_template("token_display.html", batch_results=cached_results, cached=True)
                 else:
                     all_cached = False
                     batch_tasks.append({

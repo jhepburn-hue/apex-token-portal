@@ -195,6 +195,27 @@
 <script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 
 <script>
+  const tomSelectInstances = new Map();
+
+function initTomSelectOnElement(element) {
+  if (tomSelectInstances.has(element)) return;
+
+  const instance = new TomSelect(element, {
+    create: false,
+    sortField: { field: "text", direction: "asc" },
+    placeholder: "-- Search or choose a configuration --",
+    allowEmptyOption: true
+  });
+  tomSelectInstances.set(element, instance);
+}
+
+// Initialize on page load for the baseline row
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('.searchable-select-batch').forEach(select => {
+    initTomSelectOnElement(select);
+  });
+});
+
 function addConfigRow() {
   const container = document.getElementById('config_rows_container');
   const newRow = document.createElement('div');
@@ -225,43 +246,54 @@ function addConfigRow() {
     </div>
     <button type="button" class="btn" style="background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; margin-top: 5px;" onclick="removeConfigRow(this)">Remove Row</button>
   `;
+  
   container.appendChild(newRow);
+  
+  const selectElement = newRow.querySelector('.searchable-select-batch');
+  initTomSelectOnElement(selectElement);
 }
 
 function removeConfigRow(button) {
   const container = document.getElementById('config_rows_container');
   const totalRows = container.getElementsByClassName('config-batch-row').length;
   
-  // Guard clause: Don't let the user delete the very last row, otherwise they can't submit anything
   if (totalRows > 1) {
-    button.parentElement.remove();
+    const row = button.closest('.config-batch-row');
+    const select = row.querySelector('.searchable-select-batch');
+    
+    if (select && tomSelectInstances.has(select)) {
+      tomSelectInstances.get(select).destroy();
+      tomSelectInstances.delete(select);
+    }
+    row.remove();
   } else {
     alert("You must have at least one configuration row to submit a request.");
   }
 }
-
-const configTomSelect = new TomSelect("#config_name", {
-    create: false,
-    sortField: { field: "text", direction: "asc" },
-    placeholder: "-- Search or choose a configuration --",
-    allowEmptyOption: true
-});
 
 function switchApexView() {
   const selection = document.getElementById('update_type').value;
   document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
   document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
 
-  const batchSelects = document.querySelectorAll('select[name="config_designator_update[]"]');
-  batchSelects.forEach(select => {
-    select.required = (selection === 'config_update');
+  tomSelectInstances.forEach((instance, selectElement) => {
+    if (selection === 'config_update') {
+      selectElement.setAttribute('required', 'required');
+    } else {
+      selectElement.removeAttribute('required');
+      instance.clear(); 
+    }
   });
 }
 
 function resetForm() {
   const form = document.getElementById('apexPortalForm');
   form.reset();
-  configTomSelect.clear(); 
+  
+  tomSelectInstances.forEach(instance => {
+    instance.clear();
+  });
+  
   switchApexView(); 
 }
 

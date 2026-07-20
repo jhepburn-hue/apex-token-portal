@@ -97,3 +97,6 @@ form .actions{display:flex; gap:10px; margin-top:10px}
   color: var(--text);
   border-color: #2a364b;
 }
+.ts-wrapper .ts-control input {
+  color: #ffffff !important;
+}
