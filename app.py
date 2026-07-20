@@ -67,10 +67,10 @@ def upload_to_gcs(file_path: Path, update_type: str, version_dir: str) -> str:
     return gcs_destination_path
 
 
-def background_pipeline_worker(version_dir: str, filename_stem: str, update_type: str, search_designator: str = None, timeout_seconds: int = 240):
+def background_pipeline_worker(version_dir: str, filename_stem: str, update_type: str, search_designator: str = None, add_firmware: bool = False, timeout_seconds: int = 240):
     """
-    Monitors GCS for compiled binary output from Forge, downloads it,
-    and registers a new ACTIVE token record in PocketBase using PocketBaseClient.
+    Monitors GCS for compiled binary/firmware output from Forge, downloads it,
+    and registers a new ACTIVE token record in PocketBase.
     """
     search_query = (search_designator or filename_stem.split('-')[0]).lower()
     
@@ -79,7 +79,10 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
     else:
         prefix_path = f"forge/{USER_EMAIL}/{version_dir}/"
         
-    print(f"[Worker] Monitoring GCS: gs://{BUCKET_NAME}/{prefix_path} for '{search_query}'")
+    # FIX 1: The physical file extension in GCS is always ".bin"
+    target_ext = ".bin" 
+        
+    print(f"[Worker] Monitoring GCS: gs://{BUCKET_NAME}/{prefix_path} for '{search_query}' (Firmware mode: {add_firmware})")
     JOBS[filename_stem]["state"] = "compiling"
     
     start_time = time.time()
@@ -92,8 +95,12 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
             matching_blobs = []
             for b in blobs:
                 name_lower = b.name.lower()
-                if search_query in name_lower and name_lower.endswith(".bin"):
-                    matching_blobs.append(b)
+                # FIX 2: Check for presence of "dck" in name if checked, otherwise ensure it doesn't contain "dck"
+                if search_query in name_lower and name_lower.endswith(target_ext):
+                    if add_firmware and "dck" in name_lower:
+                        matching_blobs.append(b)
+                    elif not add_firmware and "dck" not in name_lower:
+                        matching_blobs.append(b)
             
             if matching_blobs:
                 ready_to_process = True
@@ -103,14 +110,14 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                         ready_to_process = False
                 
                 if ready_to_process:
-                    print(f"[Worker] Verified stable binary artifact batch ({len(matching_blobs)} files).")
+                    print(f"[Worker] Verified stable artifact batch ({len(matching_blobs)} files).")
                     JOBS[filename_stem]["state"] = "uploading"
                     
                     primary_token_id = None
                     
                     for b in matching_blobs:
                         actual_filename = Path(b.name).stem
-                        local_download_path = GENERATED_DIR / f"{actual_filename}.bin"
+                        local_download_path = GENERATED_DIR / f"{actual_filename}{target_ext}"
                         
                         print(f"[Worker] Downloading artifact: {b.name}...")
                         b.download_to_filename(str(local_download_path))
@@ -119,12 +126,17 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                         stem_lower = filename_stem.lower()
                         query_lower = search_query.lower()
 
-                        # Flexible file target matching
                         is_target_file = False
-                        if update_type == "firmware_update":
-                            if "wall_dck" in fname_lower or "wall" in fname_lower:
-                                is_target_file = True
-                        elif update_type in ["config_update", "feature_update", "tra_tci"]:
+                        
+                        if update_type == "config_update":
+                            if add_firmware:
+                                # FIX 3: Target the "wall_dck" file specifically out of the stack
+                                if "wall_dck" in fname_lower or "wall" in fname_lower:
+                                    is_target_file = True
+                            else:
+                                if (query_lower in fname_lower or stem_lower in fname_lower) and "wall" not in fname_lower and "module" not in fname_lower:
+                                    is_target_file = True
+                        elif update_type == "feature_update":
                             if (query_lower in fname_lower or stem_lower in fname_lower) and "wall" not in fname_lower and "module" not in fname_lower:
                                 is_target_file = True
 
@@ -132,7 +144,7 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                             fw_ver = version_dir.lstrip('v')
                             cfg_name = (search_designator or filename_stem.split('-')[0]).upper()
                             
-                            if update_type == "firmware_update":
+                            if update_type == "config_update" and add_firmware:
                                 token_name = f"{fw_ver} {cfg_name} FIRMWARE"
                             elif update_type == "config_update":
                                 token_name = f"{fw_ver} {cfg_name} PROFILE"
@@ -142,16 +154,15 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
                                 clean_details = clean_details.replace('Tci', 'TCI').replace('Tra Off', 'TRA Off').replace('Tra On', 'TRA On')
                                 token_name = f"{fw_ver} {clean_details}"
 
-                            # Upload and register via PocketBase Client
                             token_id = pb_client.create_token_record(token_name, local_download_path)
                             primary_token_id = token_id
                         else:
-                            print(f"[Worker] Skipping non-target binary artifact: {actual_filename}")
+                            print(f"[Worker] Skipping non-target artifact: {actual_filename}")
                             
                         local_download_path.unlink(missing_ok=True)
                     
                     if not primary_token_id:
-                        raise Exception(f"No matching target binary artifact found for search query '{search_query}'.")
+                        raise Exception(f"No matching target artifact found for search query '{search_query}'.")
 
                     JOBS[filename_stem]["token"] = primary_token_id
                     JOBS[filename_stem]["state"] = "completed"
@@ -180,11 +191,13 @@ def process():
     form_data = request.form.to_dict(flat=True)
     update_type = form_data.get("update_type")
     
+    # ADJUSTMENT 1: Extract the new checkbox flag state
+    add_firmware_active = form_data.get("add_firmware") == "true"
+    
+    # ADJUSTMENT 2: Clean up version fallback extraction (since option 2 is deprecated)
     if update_type == "feature_update":
         firmware_options = request.form.getlist("current_firmware")
         raw_version = firmware_options[1] if len(firmware_options) > 1 else (firmware_options[0] if firmware_options else "v5.4.1")
-    elif update_type == "firmware_update":
-        raw_version = form_data.get("current_firmware") or "v5.4.1"
     else:
         raw_version = form_data.get("current_firmware_update") or "v5.4.1"
         
@@ -198,13 +211,13 @@ def process():
         generated_ini_path = None
 
         # 1. DERIVE TOKEN NAME & TARGET INI STEM
-        if update_type in ["config_update", "firmware_update"]:
-            config_designator = form_data.get("config_designator_update" if update_type == "config_update" else "config_designator", "").strip().upper()
-            suffix = "PROFILE" if update_type == "config_update" else "FIRMWARE"
+        if update_type == "config_update":
+            config_designator = form_data.get("config_designator_update", "").strip().upper()
+            # ADJUSTMENT 3: Modify the token designation name dynamic suffix 
+            suffix = "FIRMWARE" if add_firmware_active else "PROFILE"
             token_name = f"{fw_ver} {config_designator} {suffix}"
             target_ini_stem = config_designator
         else:
-            # Generate feature update partial configuration file locally
             default_ini_path = BASE_DIR / "default.ini"
             generated_ini_path = build_partial_ini(default_ini_path, GENERATED_DIR, form_data)
             target_ini_stem = generated_ini_path.stem
@@ -221,7 +234,7 @@ def process():
         # 3. API INTERACTIONS WITH FORGE
         selected_build_id = FIRMWARE_IDS.get(raw_version, "5480")
 
-        if update_type in ["config_update", "firmware_update"]:
+        if update_type == "config_update":
             if not config_designator:
                 raise Exception("A valid Configuration Designation identifier string must be provided.")
                 
@@ -229,13 +242,11 @@ def process():
             if not local_csv_source.exists():
                 raise Exception(f"Configuration profile CSV not found locally: {config_designator}.csv")
                 
-            # Step A: Import CSV via ForgeClient API
             print(f"[Portal Backend] Importing CSV via Forge API for {config_designator}...")
             import_resp = forge_client.import_csv_config(local_csv_source, target_version=raw_version)
             if import_resp.status_code not in [200, 201, 303]:
                 raise Exception(f"Forge CSV Import Failed ({import_resp.status_code}): {import_resp.text}")
 
-            # Step B: Trigger Build via ForgeClient API
             print(f"[Portal Backend] Triggering apex-config build via Forge API...")
             build_resp = forge_client.trigger_config_build(
                 config_name=config_designator,
@@ -248,7 +259,6 @@ def process():
                 raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
 
         elif update_type in ["feature_update", "tra_tci"]:
-            # Upload partial INI to GCS forge/user/version/partials/
             upload_to_gcs(generated_ini_path, update_type, version_dir)
             generated_ini_path.unlink(missing_ok=True)
 
@@ -268,9 +278,10 @@ def process():
         tracking_key = target_ini_stem.upper()
         JOBS[tracking_key] = {"state": "initializing", "token": None, "error": None}
 
+        # ADJUSTMENT 4: Append the add_firmware_active state boolean to the thread arguments
         t = threading.Thread(
             target=background_pipeline_worker, 
-            args=(version_dir, tracking_key, update_type, config_designator)
+            args=(version_dir, tracking_key, update_type, config_designator, add_firmware_active)
         )
         t.daemon = True
         t.start()

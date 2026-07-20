@@ -10,25 +10,9 @@
       <label for="update_type">Pipeline Intent</label>
       <select id="update_type" name="update_type" onchange="switchApexView()" required>
         <option value="">-- Select an Option --</option>
-        <option value="firmware_update">Option 1: Firmware Update</option>
-        <option value="config_update">Option 2: Configuration Update</option>
-        <option value="feature_update">Option 3: Feature Update</option>
+        <option value="config_update">Option 1: Configuration Update</option>
+        <option value="feature_update">Option 2: Feature Update</option>
       </select>
-    </div>
-
-    <div id="view_firmware" class="hidden">
-      <div class="form-row">
-        <label for="config_designator">Configuration Name</label>
-        <input type="text" id="config_designator" name="config_designator" placeholder="e.g., CUP1, CLTK3">
-      </div>
-      <div class="form-row">
-        <label for="current_firmware">Current Reader Firmware</label>
-        <select id="current_firmware" name="current_firmware">
-          <option value="v5.4.1">v5.4.1</option>
-          <option value="v5.4.6">v5.4.6</option>
-          <option value="v5.4.7">v5.4.7</option>
-        </select>
-      </div>
     </div>
 
     <div id="view_config" class="hidden">
@@ -37,18 +21,24 @@
         <input type="text" id="config_designator_update" name="config_designator_update" placeholder="e.g., CUP1, CLTK3">
       </div>
       <div class="form-row">
-        <label for="current_firmware_update">Current Reader Firmware</label>
+        <label for="current_firmware_update">Target Firmware</label>
         <select id="current_firmware_update" name="current_firmware_update">
           <option value="v5.4.1">v5.4.1</option>
           <option value="v5.4.6">v5.4.6</option>
           <option value="v5.4.7">v5.4.7</option>
         </select>
       </div>
+      <div class="form-check numeric-alignment">
+        <input type="checkbox" class="form-check-input" id="add_firmware" name="add_firmware" value="true">
+        <label class="form-check-label" for="add_firmware">
+          Add DCK
+        </label>
+      </div>
     </div>
 
     <div id="view_features" class="hidden" style="margin-top: 15px;">
       <div class="form-row">
-        <label for="current_firmware">Current Reader Firmware</label>
+        <label for="current_firmware">Target Firmware</label>
         <select id="current_firmware" name="current_firmware">
           <option value="v5.4.1">v5.4.1</option>
           <option value="v5.4.6">v5.4.6</option>
@@ -180,10 +170,8 @@
 <script>
 function switchApexView() {
   const selection = document.getElementById('update_type').value;
-  document.getElementById('view_firmware').classList.toggle('hidden', selection !== 'firmware_update');
   document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
   document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
-  document.getElementById('view_tra_tci').classList.toggle('hidden', selection !== 'tra_tci');
 }
 
 function resetForm() {
