@@ -24,7 +24,6 @@
             name="config_name" 
             id="config_name" 
             placeholder="Type to search configs..." 
-            required
         >
         <datalist id="configs">
             {% for name in config_names %}
@@ -194,8 +193,18 @@
 <script>
 function switchApexView() {
   const selection = document.getElementById('update_type').value;
-  document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
-  document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
+  const viewConfig = document.getElementById('view_config');
+  const viewFeatures = document.getElementById('view_features');
+  const configInput = document.getElementById('config_name');
+
+  viewConfig.classList.toggle('hidden', selection !== 'config_update');
+  viewFeatures.classList.toggle('hidden', selection !== 'feature_update');
+
+  if (selection === 'config_update') {
+    configInput.required = true;
+  } else {
+    configInput.required = false;
+  }
 }
 
 function resetForm() {
@@ -212,5 +221,11 @@ function singleSelect(checkbox) {
       });
     }
   }
+
+  document.getElementById('tci_input').addEventListener('input', function(e) {
+  if (this.value.includes(' (')) {
+    this.value = this.value.split(' ')[0];
+  }
+});
 </script>
 {% endblock %}

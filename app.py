@@ -223,6 +223,20 @@ def index():
 def process():
     form_data = request.form.to_dict(flat=True)
     update_type = form_data.get("update_type")
+
+    # Sanitization for TCI
+    if update_type == "feature_update":
+        raw_tci = form_data.get("tci", "").strip()
+        match = re.search(r'\b\d{6}\b', raw_tci)
+        
+        if match:
+            form_data["tci"] = match.group(0)
+        elif raw_tci: 
+            return render_template(
+                "error.html", 
+                error="Invalid TCI format. It must be exactly 6 digits (e.g., 023000).", 
+                traceback_text=""
+            ), 400
     
     # ADJUSTMENT 1: Extract the new checkbox flag state
     add_firmware_active = form_data.get("add_firmware") == "true"
