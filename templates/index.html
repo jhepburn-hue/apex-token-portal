@@ -160,7 +160,19 @@
 
       <div class="form-row">
         <label for="tci_input">TCI / Terminal ID</label>
-        <input type="text" id="tci_input" name="tci" placeholder="e.g., 023000">
+        <input 
+            type="text" 
+            id="tci_input" 
+            name="tci" 
+            list="tci_suggestions"
+            autocomplete="off"
+            placeholder="e.g., 023000 (Or type custom)"
+        >
+        <datalist id="tci_suggestions">
+            {% for item in tci_dropdown_list %}
+                <option value="{{ item }}">{{ item }}</option>
+            {% endfor %}
+        </datalist>
       </div>
 
       <div class="form-group-vertical">

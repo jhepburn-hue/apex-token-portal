@@ -1,5 +1,6 @@
 import os
 import re
+import csv
 import time
 import threading
 import traceback
@@ -186,15 +187,36 @@ def index():
     config_dir = os.path.join(os.path.dirname(__file__), 'apex_configs')
     
     config_names = []
+    tci_dropdown_list = [] 
+
     if os.path.exists(config_dir):
-        config_names = [
-            os.path.splitext(f)[0] 
-            for f in os.listdir(config_dir) 
-            if f.endswith('.csv')
-        ]
+        files = [f for f in os.listdir(config_dir) if f.endswith('.csv')]
+        config_names = [os.path.splitext(f)[0] for f in files]
         config_names.sort()
 
-    return render_template('index.html', config_names=config_names)
+        for f in files:
+            config_name = os.path.splitext(f)[0]
+            file_path = os.path.join(config_dir, f)
+            
+            try:
+                with open(file_path, mode='r', encoding='utf-8', errors='ignore') as csvfile:
+                    for line in csvfile:
+                        parts = [p.strip().strip('"') for p in line.split(',')]
+                        
+                        if parts and parts[0].strip().upper() == 'ECP TCI':
+                            if len(parts) > 2:
+                                tci_val = parts[2].strip()
+                                
+                                if tci_val and tci_val not in ['1', '0', '']:
+                                    display_string = f"{tci_val} ({config_name})"
+                                    tci_dropdown_list.append(display_string)
+                            break  
+            except Exception as e:
+                print(f"Error reading {f}: {e}")
+
+        tci_dropdown_list = sorted(list(set(tci_dropdown_list)))
+
+    return render_template('index.html', config_names=config_names, tci_dropdown_list=tci_dropdown_list)
 
 
 @app.route("/process", methods=["POST"])
