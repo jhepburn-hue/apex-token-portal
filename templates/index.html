@@ -40,6 +40,8 @@
             <input type="checkbox" class="form-check-input" name="add_firmware[]" value="true">
             <label class="form-check-label">Add DCK</label>
           </div>
+
+          <button type="button" class="btn" style="background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; margin-top: 5px;" onclick="removeConfigRow(this)">Remove Row</button>
         </div>
       </div>
       
@@ -221,9 +223,21 @@ function addConfigRow() {
       <input type="checkbox" class="form-check-input" name="add_firmware[]" value="true">
       <label class="form-check-label">Add DCK</label>
     </div>
-    <button type="button" class="btn" style="background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; margin-top: 5px;" onclick="this.parentElement.remove()">Remove Row</button>
+    <button type="button" class="btn" style="background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; margin-top: 5px;" onclick="removeConfigRow(this)">Remove Row</button>
   `;
   container.appendChild(newRow);
+}
+
+function removeConfigRow(button) {
+  const container = document.getElementById('config_rows_container');
+  const totalRows = container.getElementsByClassName('config-batch-row').length;
+  
+  // Guard clause: Don't let the user delete the very last row, otherwise they can't submit anything
+  if (totalRows > 1) {
+    button.parentElement.remove();
+  } else {
+    alert("You must have at least one configuration row to submit a request.");
+  }
 }
 
 const configTomSelect = new TomSelect("#config_name", {
