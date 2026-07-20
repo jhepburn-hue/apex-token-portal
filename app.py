@@ -237,8 +237,7 @@ def process():
                 traceback_text=""
             ), 400
             
-        firmware_options = request.form.getlist("current_firmware")
-        raw_version = firmware_options[1] if len(firmware_options) > 1 else (firmware_options[0] if firmware_options else "v5.4.1")
+        raw_version = request.form.get("current_firmware", "v5.4.1").strip()
         if not raw_version.startswith('v'): raw_version = f"v{raw_version}"
         version_dir = to_slug(raw_version)
         selected_build_id = FIRMWARE_IDS.get(raw_version, "5480")
@@ -301,8 +300,13 @@ def process():
                 tracking_key = config_designator
 
                 cached_token = pb_client.check_active_token(token_name)
-                if all_cached:
-                    return render_template("token_display.html", batch_results=cached_results, cached=True)
+                
+                if cached_token:
+                    cached_results.append({
+                        "config_name": config_designator,
+                        "firmware": raw_version,
+                        "token": cached_token
+                    })
                 else:
                     all_cached = False
                     batch_tasks.append({
@@ -315,7 +319,7 @@ def process():
                     })
 
             # Condition A: Everything requested is cached! Return instantly
-            if all_cached:
+            if all_cached and cached_results:
                 return render_template("token_display.html", batch_results=cached_results, cached=True)
 
             # Condition B: Compile outstanding build requests sequentially or concurrently

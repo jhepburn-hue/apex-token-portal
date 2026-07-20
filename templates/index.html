@@ -273,14 +273,20 @@ function removeConfigRow(button) {
 
 function switchApexView() {
   const selection = document.getElementById('update_type').value;
+  
   document.getElementById('view_config').classList.toggle('hidden', selection !== 'config_update');
   document.getElementById('view_features').classList.toggle('hidden', selection !== 'feature_update');
 
-  tomSelectInstances.forEach((instance, selectElement) => {
+  document.querySelectorAll('.searchable-select-batch').forEach(selectElement => {
     if (selection === 'config_update') {
       selectElement.setAttribute('required', 'required');
     } else {
       selectElement.removeAttribute('required');
+    }
+  });
+
+  tomSelectInstances.forEach((instance, selectElement) => {
+    if (selection !== 'config_update') {
       instance.clear(); 
     }
   });
