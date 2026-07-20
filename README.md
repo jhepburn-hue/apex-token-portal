@@ -6,12 +6,12 @@ An automated configuration management portal and asset compilation pipeline buil
 
 ## Core Features & Architecture
 
-* **Multi-Build Pipeline Integration:** Bridges partial configurations, configuration profiles, and firmware updates with automated builds on Forge.
-* **PocketBase Cache Layer:** Bypasses compilation and serves cached tokens if an active token is found inside PocketBase.
-* **Dynamic Content Syncing:** Uploads generated partial configurations to GCS while maintaining a background status worker (background_pipeline_worker) tracking compile lifecycles.
-* **Integrated API Clients:** Uses native Python clients to handle authentication, CSV uploads, pipeline builds, and token generation via REST APIs.
-* **TCI & TRA Mode Generation:** Constructs customized terminal configuration INI partials combining Terminal IDs with a TRA Mode state toggle (`terminal_info = 0x83` for ON, `0x00` for OFF).
-* **Unified Visual Presentation:** Features an interface (loading.html and polling /status/<filename_stem>) that handles newly compiled tokens and cached lookups.
+* **Unified Full-Profile Pipeline:** Merges firmware and profiles configuration updates into a single engine workflow with optional DCK injection.
+* **Batch Request Processing:** Supports the simultaneous entry and processing of multiple configurations within a single submission block.
+* **Consolidated Cache-Checking Layer:** Bypasses compile lifecycles and immediately serves active tokens if an identical record exists within PocketBase.
+* **Integrated Asynchronous Syncing:** Dispatches generated profile changes directly to GCS while executing a background status routine (`background_pipeline_worker`) to monitor long-running compile lifetimes.
+* **Modular Partial Feature Overrides:** Groups hardware adjustment controls—including standard settings flags (Anti-Passback, OSDP, BLE) and Terminal Configuration data (TCI Address mappings + TRA Mode hex bytes)—under a single partial INI builder environment.
+* **Unified Visual Presentation:** Features a web terminal (`loading.html` and dynamic `/status/<filename_stem>` polling) to seamless handle active asynchronous lookups and new compilations.
 
 ---
 
@@ -29,19 +29,19 @@ To run this application locally, you will need:
 
 ```bash
 apex-token-portal/
-├── app.py                            # Primary Flask web application and background worker logic
-├── forge_client.py                   # API Client for Forge config imports and build triggers
-├── pocketbase_client.py              # API Client for PocketBase caching and token registration
-├── default.ini                       # Global default hardware state baseline
-├── application_default_credentials.json # GCP Service Account credentials
-├── apex_configs/                     # Local repository of configuration profile CSVs
+├── app.py              # Primary Flask web application and background worker routing logic
+├── forge_client.py     # API Client managing remote Forge pipeline build signals
+├── pocketbase_client.py# API Client validating active tokens and tracking cache records
+├── default.ini         # Global default baseline hardware settings layer
+├── requirements.txt    # Application system package dependency manifest
+├── apex_configs/       # Local repository directory housing hardware mapping files (.csv)
 │   ├── CDCC1.csv
 │   ├── CLTK3.csv
 │   └── ...
 ├── utils/
-│   ├── ini_builder.py                # Constructs partial INI files from feature web forms and TCI/TRA inputs
-├── templates/                        # Jinja2 HTML templates
-└── static/                           # CSS stylesheets and layout styling
+│   └── ini_builder.py  # Generates custom parameter payloads from standard form toggles and TCI/TRA blocks
+├── templates/          # Jinja2 presentation layout view directories
+└── static/             # Layout styling definitions and static stylesheets
 ```
 
 ---
