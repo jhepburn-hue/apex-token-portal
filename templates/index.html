@@ -18,18 +18,12 @@
     <div id="view_config" class="hidden">
       <div class="form-row">
         <label for="config_name">Configuration Name</label>
-        <input 
-            type="text"
-            list="configs" 
-            name="config_name" 
-            id="config_name" 
-            placeholder="Type to search configs..." 
-        >
-        <datalist id="configs">
-            {% for name in config_names %}
-                <option value="{{ name }}">
-            {% endfor %}
-        </datalist>
+        <select name="config_designator_update" id="config_name" class="searchable-select">
+          <option value="" disabled selected>-- Search or choose a configuration --</option>
+          {% for name in config_names %}
+              <option value="{{ name }}">{{ name }}</option>
+          {% endfor %}
+        </select>
       </div>
       <div class="form-row">
         <label for="current_firmware_update">Target Firmware</label>
@@ -190,7 +184,17 @@
   </form>
 </div>
 
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
+
 <script>
+const configTomSelect = new TomSelect("#config_name", {
+    create: false,
+    sortField: { field: "text", direction: "asc" },
+    placeholder: "-- Search or choose a configuration --",
+    allowEmptyOption: true
+});
+
 function switchApexView() {
   const selection = document.getElementById('update_type').value;
   const viewConfig = document.getElementById('view_config');
@@ -204,25 +208,27 @@ function switchApexView() {
     configInput.required = true;
   } else {
     configInput.required = false;
+    configTomSelect.setValue(""); 
   }
 }
 
 function resetForm() {
   const form = document.getElementById('apexPortalForm');
   form.reset();
+  configTomSelect.clear(); 
   switchApexView(); 
 }
 
 function singleSelect(checkbox) {
-    if (checkbox.checked) {
-      const group = document.getElementsByName(checkbox.name);
-      group.forEach(item => {
-        if (item !== checkbox) item.checked = false;
-      });
-    }
+  if (checkbox.checked) {
+    const group = document.getElementsByName(checkbox.name);
+    group.forEach(item => {
+      if (item !== checkbox) item.checked = false;
+    });
   }
+}
 
-  document.getElementById('tci_input').addEventListener('input', function(e) {
+document.getElementById('tci_input').addEventListener('input', function(e) {
   if (this.value.includes(' (')) {
     this.value = this.value.split(' ')[0];
   }
