@@ -221,14 +221,13 @@ def index():
 
 @app.route("/process", methods=["POST"])
 def process():
-    form_data = request.form.to_dict(flat=True)
-    update_type = form_data.get("update_type")
+    update_type = request.form.get("update_type")
 
-    # Sanitization for TCI
+    # Sanitization for TCI 
     if update_type == "feature_update":
+        form_data = request.form.to_dict(flat=True)
         raw_tci = form_data.get("tci", "").strip()
         match = re.search(r'\b\d{6}\b', raw_tci)
-        
         if match:
             form_data["tci"] = match.group(0)
         elif raw_tci: 
@@ -237,123 +236,170 @@ def process():
                 error="Invalid TCI format. It must be exactly 6 digits (e.g., 023000).", 
                 traceback_text=""
             ), 400
-    
-    # ADJUSTMENT 1: Extract the new checkbox flag state
-    add_firmware_active = form_data.get("add_firmware") == "true"
-    
-    # ADJUSTMENT 2: Clean up version fallback extraction (since option 2 is deprecated)
-    if update_type == "feature_update":
+            
         firmware_options = request.form.getlist("current_firmware")
         raw_version = firmware_options[1] if len(firmware_options) > 1 else (firmware_options[0] if firmware_options else "v5.4.1")
-    else:
-        raw_version = form_data.get("current_firmware_update") or "v5.4.1"
+        if not raw_version.startswith('v'): raw_version = f"v{raw_version}"
+        version_dir = to_slug(raw_version)
+        selected_build_id = FIRMWARE_IDS.get(raw_version, "5480")
         
-    if not raw_version.startswith('v'):
-        raw_version = f"v{raw_version}"
-    version_dir = to_slug(raw_version)
-
-    try:
-        config_designator = None
-        fw_ver = version_dir.lstrip('v')
-        generated_ini_path = None
-
-        # 1. DERIVE TOKEN NAME & TARGET INI STEM
-        if update_type == "config_update":
-            config_designator = form_data.get("config_designator_update", "").strip().upper()
-            # ADJUSTMENT 3: Modify the token designation name dynamic suffix 
-            suffix = "FIRMWARE" if add_firmware_active else "PROFILE"
-            token_name = f"{fw_ver} {config_designator} {suffix}"
-            target_ini_stem = config_designator
-        else:
+        try:
             default_ini_path = BASE_DIR / "default.ini"
             generated_ini_path = build_partial_ini(default_ini_path, GENERATED_DIR, form_data)
             target_ini_stem = generated_ini_path.stem
+            fw_ver = version_dir.lstrip('v')
             clean_details = target_ini_stem.upper().replace('_', ' ').title().replace('Osdp', 'OSDP').replace('Led', 'LED').replace('OSDP Baud Rate', 'Baud Rate')
             token_name = f"{fw_ver} {clean_details}"
 
-        # 2. CACHE CHECK (PocketBase)
-        cached_token = pb_client.check_active_token(token_name)
-        if cached_token:
-            if generated_ini_path and generated_ini_path.exists():
-                generated_ini_path.unlink(missing_ok=True)
-            return render_template("token_display.html", token=cached_token, cached=True)
+            cached_token = pb_client.check_active_token(token_name)
+            if cached_token:
+                if generated_ini_path.exists(): generated_ini_path.unlink(missing_ok=True)
+                return render_template("token_display.html", token=cached_token, cached=True)
 
-        # 3. API INTERACTIONS WITH FORGE
-        selected_build_id = FIRMWARE_IDS.get(raw_version, "5480")
-
-        if update_type == "config_update":
-            if not config_designator:
-                raise Exception("A valid Configuration Designation identifier string must be provided.")
-                
-            local_csv_source = BASE_DIR / f"apex_configs/{config_designator}.csv"
-            if not local_csv_source.exists():
-                raise Exception(f"Configuration profile CSV not found locally: {config_designator}.csv")
-                
-            print(f"[Portal Backend] Importing CSV via Forge API for {config_designator}...")
-            import_resp = forge_client.import_csv_config(local_csv_source, target_version=raw_version)
-            if import_resp.status_code not in [200, 201, 303]:
-                raise Exception(f"Forge CSV Import Failed ({import_resp.status_code}): {import_resp.text}")
-
-            print(f"[Portal Backend] Triggering apex-config build via Forge API...")
-            build_resp = forge_client.trigger_config_build(
-                config_name=config_designator,
-                version=raw_version,
-                firmware_build_id=selected_build_id,
-                firmware_source="Release",
-                include_partials="0"
-            )
-            if build_resp.status_code not in [200, 201, 303]:
-                raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
-
-        elif update_type in ["feature_update", "tra_tci"]:
             upload_to_gcs(generated_ini_path, update_type, version_dir)
             generated_ini_path.unlink(missing_ok=True)
 
-            print(f"[Portal Backend] Triggering feature update build via Forge API...")
             build_resp = forge_client.trigger_config_build(
-                config_name=target_ini_stem,
-                version=raw_version,
-                firmware_build_id=selected_build_id,
-                firmware_source="Release",
-                include_partials="1",
-                gitlab_ref="DEVOPS-212-partial-config-builds"
+                config_name=target_ini_stem, version=raw_version, firmware_build_id=selected_build_id,
+                firmware_source="Release", include_partials="1", gitlab_ref="DEVOPS-212-partial-config-builds"
             )
-            if build_resp.status_code not in [200, 201, 303]:
-                raise Exception(f"Forge Feature Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
+            if build_resp.status_code not in [200, 201, 303]: raise Exception(f"Forge Trigger Failed: {build_resp.text}")
 
-        # 4. DISPATCH BACKGROUND MONITORING WORKER
-        tracking_key = target_ini_stem.upper()
-        JOBS[tracking_key] = {"state": "initializing", "token": None, "error": None}
+            tracking_key = target_ini_stem.upper()
+            JOBS[tracking_key] = {"state": "initializing", "token": None, "error": None}
+            t = threading.Thread(target=background_pipeline_worker, args=(version_dir, tracking_key, update_type, None, False))
+            t.daemon = True; t.start()
 
-        # ADJUSTMENT 4: Append the add_firmware_active state boolean to the thread arguments
-        t = threading.Thread(
-            target=background_pipeline_worker, 
-            args=(version_dir, tracking_key, update_type, config_designator, add_firmware_active)
-        )
-        t.daemon = True
-        t.start()
+            return render_template("loading.html", version=raw_version, filename_stem=target_ini_stem, update_type=update_type, firmware_build_id=selected_build_id)
+        except Exception as e:
+            return render_template("error.html", error=str(e), traceback_text=traceback.format_exc()), 500
 
-        return render_template(
-            "loading.html", 
-            version=raw_version, 
-            filename_stem=target_ini_stem, 
-            update_type=update_type, 
-            firmware_build_id=selected_build_id
-        )
-    
-    except Exception as e:
-        tb = traceback.format_exc()
-        return render_template("error.html", error=str(e), traceback_text=tb), 500
+    # BATCH CONFIG UPDATE EXECUTION PATH
+    elif update_type == "config_update":
+        configs = request.form.getlist("config_designator_update[]")
+        firmwares = request.form.getlist("current_firmware_update[]")
+        add_firmware_flags = request.form.getlist("add_firmware[]")
 
+        batch_tasks = []
+        cached_results = []
+        all_cached = True
+
+        try:
+            for idx, config_designator in enumerate(configs):
+                config_designator = config_designator.strip().upper()
+                raw_version = firmwares[idx] if idx < len(firmwares) else "v5.4.1"
+                add_firmware_active = "true" in add_firmware_flags 
+                
+                if not raw_version.startswith('v'):
+                    raw_version = f"v{raw_version}"
+                version_dir = to_slug(raw_version)
+                fw_ver = version_dir.lstrip('v')
+                selected_build_id = FIRMWARE_IDS.get(raw_version, "5480")
+
+                suffix = "FIRMWARE" if add_firmware_active else "PROFILE"
+                token_name = f"{fw_ver} {config_designator} {suffix}"
+                tracking_key = config_designator
+
+                cached_token = pb_client.check_active_token(token_name)
+                if cached_token:
+                    cached_results.append({"config_name": config_designator, "token": cached_token, "cached": True})
+                else:
+                    all_cached = False
+                    batch_tasks.append({
+                        "config_designator": config_designator,
+                        "raw_version": raw_version,
+                        "version_dir": version_dir,
+                        "selected_build_id": selected_build_id,
+                        "add_firmware_active": add_firmware_active,
+                        "tracking_key": tracking_key
+                    })
+
+            # Condition A: Everything requested is cached! Return instantly
+            if all_cached:
+                return render_template("token_display.html", batch_results=cached_results, cached=True)
+
+            # Condition B: Compile outstanding build requests sequentially or concurrently
+            for task in batch_tasks:
+                local_csv_source = BASE_DIR / f"apex_configs/{task['config_designator']}.csv"
+                if not local_csv_source.exists():
+                    raise Exception(f"Configuration profile CSV not found locally: {task['config_designator']}.csv")
+
+                print(f"[Portal Backend] Importing CSV via Forge API for {task['config_designator']}...")
+                import_resp = forge_client.import_csv_config(local_csv_source, target_version=task['raw_version'])
+                if import_resp.status_code not in [200, 201, 303]:
+                    raise Exception(f"Forge CSV Import Failed ({import_resp.status_code}): {import_resp.text}")
+
+                print(f"[Portal Backend] Triggering apex-config build via Forge API...")
+                build_resp = forge_client.trigger_config_build(
+                    config_name=task['config_designator'], version=task['raw_version'], firmware_build_id=task['selected_build_id'],
+                    firmware_source="Release", include_partials="0"
+                )
+                if build_resp.status_code not in [200, 201, 303]:
+                    raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
+
+                JOBS[task['tracking_key']] = {"state": "initializing", "token": None, "error": None}
+                t = threading.Thread(
+                    target=background_pipeline_worker, 
+                    args=(task['version_dir'], task['tracking_key'], update_type, task['config_designator'], task['add_firmware_active'])
+                )
+                t.daemon = True
+                t.start()
+
+            return render_template(
+                "loading.html", 
+                is_batch=True,
+                batch_stems=[t['config_designator'] for t in batch_tasks],
+                pre_cached_tokens=cached_results
+            )
+
+        except Exception as e:
+            return render_template("error.html", error=str(e), traceback_text=traceback.format_exc()), 500
+        
 
 @app.route("/status/<filename_stem>", methods=["GET"])
 def job_status(filename_stem):
+    if "," in filename_stem:
+        stems = [s.strip().upper() for s in filename_stem.split(",") if s.strip()]
+        statuses = []
+        all_completed = True
+        failed_job = None
+
+        for stem in stems:
+            job = JOBS.get(stem, {"state": "unknown", "token": None, "error": None})
+            statuses.append({"stem": stem, "state": job["state"]})
+            if job["state"] != "completed":
+                all_completed = False
+            if job["state"] == "failed":
+                failed_job = job
+
+        if failed_job:
+            return jsonify({"state": "failed", "error": failed_job["error"]})
+        elif all_completed:
+            return jsonify({"state": "completed", "batch": True})
+        else:
+            current_state = next((s["state"] for s in statuses if s["state"] != "completed"), "compiling")
+            return jsonify({"state": current_state})
+            
     job = JOBS.get(filename_stem.upper(), {"state": "unknown", "token": None, "error": None})
     return jsonify(job)
 
 
 @app.route("/token_display_view", methods=["GET"])
 def token_display_view():
+    stems_raw = request.args.get("stems", "")
+    if stems_raw:
+        stems = [s.strip().upper() for s in stems_raw.split(",") if s.strip()]
+        batch_results = []
+        
+        for stem in stems:
+            job = JOBS.get(stem, {"token": None})
+            batch_results.append({
+                "config_name": stem,
+                "firmware": "Compiled Lifecycle",
+                "token": job["token"] if job["token"] else "Token Assignment Missing"
+            })
+        return render_template("token_display.html", batch_results=batch_results, cached=False)
+
     token = request.args.get("token", "")
     is_cached = request.args.get("cached", "false").lower() == "true"
     return render_template("token_display.html", token=token, cached=is_cached)

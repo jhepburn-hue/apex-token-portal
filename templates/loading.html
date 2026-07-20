@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Processing Token...</title>
+    <title>Processing Tokens...</title>
     <style>
         body { background: #0f172a; color: #f8fafc; font-family: system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
         .card { background: #1e293b; padding: 2.5rem; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3); text-align: center; max-width: 450px; width: 100%; border: 1px solid #334155; }
@@ -16,23 +16,37 @@
     <div class="card">
         <div id="loader">
             <div class="spinner"></div>
-            <h2>Generating Token...</h2>
+            <h2>Generating Tokens...</h2>
             <p id="status-text">Initializing build process...</p>
         </div>
     </div>
 
     <script>
-        const taskName = "{{ filename_stem }}";
+        const isBatch = {{ is_batch | tojson if is_batch is defined else false }};
+        let queryKey = "";
+
+        if (isBatch) {
+            const stemsList = {{ batch_stems | tojson if batch_stems is defined else [] }};
+            queryKey = stemsList.join(",");
+        } else {
+            queryKey = "{{ filename_stem if filename_stem is defined else '' }}";
+        }
         
         function checkStatus() {
-            fetch(`/status/${taskName.toUpperCase()}`)
+            if (!queryKey) return;
+            
+            fetch(`/status/${encodeURIComponent(queryKey)}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.state) {
                         document.getElementById('status-text').innerText = `Status: ${data.state}...`;
                     }
                     if (data.state === 'completed') {
-                        window.location.href = "/token_display_view?token=" + encodeURIComponent(data.token) + "&cached=false";
+                        if (isBatch) {
+                            window.location.href = "/token_display_view?stems=" + encodeURIComponent(queryKey);
+                        } else {
+                            window.location.href = "/token_display_view?token=" + encodeURIComponent(data.token) + "&cached=false";
+                        }
                     } else if (data.state === 'failed') {
                         document.getElementById('status-text').innerText = "Failed: " + (data.error || "Unknown error");
                     } else {

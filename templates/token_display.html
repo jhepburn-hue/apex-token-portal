@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="card" style="text-align: center; padding: 40px 20px;">
-  {% if cached %}
-    <span class="badge" style="background: #1e293b; color: var(--accent-2); margin-bottom: 15px;">Token Found in Cache</span>
-  {% else %}
-    <span class="badge" style="background: #14532d; color: var(--accent); margin-bottom: 15px;">New Configuration Compiled</span>
-  {% endif %}
-
-  <h2>Apex Token</h2>
-  <p class="desc">Use this token on Configure to update your readers.</p>
   
-  <div style="background: #0b1222; border: 1px solid var(--border); padding: 18px; border-radius: 12px; font-family: monospace; font-size: 22px; color: #ffffff; letter-spacing: 1px; margin: 25px auto; max-width: 600px; word-break: break-all; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
-    {{ token }}
-  </div>
+  {% if batch_results %}
+    <h2>Generated Apex Tokens</h2>
+    <p class="desc">Use these tokens on Configure to update your readers.</p>
+
+    <div class="tokens-batch-container" style="margin: 25px auto; max-width: 750px; text-align: left;">
+      {% for item in batch_results %}
+        <div style="background: #1e293b; border: 1px solid #334155; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+          <div style="font-size: 13px; color: #38bdf8; margin-bottom: 5px; font-weight: bold;">
+            Config: <span style="color:#ffffff;">{{ item.config_name }}</span>
+          </div>
+          <div style="background: #0b1222; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 18px; color: #22c55e; word-break: break-all; box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);">
+            {{ item.token }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <h2>Apex Token</h2>
+    <p class="desc">Use this token on Configure to update your readers.</p>
+    <div style="background: #0b1222; border: 1px solid var(--border); padding: 18px; border-radius: 12px; font-family: monospace; font-size: 22px; color: #ffffff; letter-spacing: 1px; margin: 25px auto; max-width: 600px; word-break: break-all; box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);">
+      {{ token }}
+    </div>
+  {% endif %}
 
   <div class="actions" style="justify-content: center; margin-top: 20px;">
     <a href="{{ url_for('index') }}" class="btn primary">← Process Next Request</a>
