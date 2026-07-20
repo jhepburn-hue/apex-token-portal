@@ -181,9 +181,20 @@ def background_pipeline_worker(version_dir: str, filename_stem: str, update_type
     JOBS[filename_stem]["error"] = "Asset generation timed out waiting for Forge output."
 
 
-@app.route("/", methods=["GET"])
+@app.route('/')
 def index():
-    return render_template("index.html")
+    config_dir = os.path.join(os.path.dirname(__file__), 'apex_configs')
+    
+    config_names = []
+    if os.path.exists(config_dir):
+        config_names = [
+            os.path.splitext(f)[0] 
+            for f in os.listdir(config_dir) 
+            if f.endswith('.csv')
+        ]
+        config_names.sort()
+
+    return render_template('index.html', config_names=config_names)
 
 
 @app.route("/process", methods=["POST"])

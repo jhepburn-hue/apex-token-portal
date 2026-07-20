@@ -17,8 +17,20 @@
 
     <div id="view_config" class="hidden">
       <div class="form-row">
-        <label for="config_designator_update">Configuration Name</label>
-        <input type="text" id="config_designator_update" name="config_designator_update" placeholder="e.g., CUP1, CLTK3">
+        <label for="config_name">Configuration Name</label>
+        <input 
+            type="text"
+            list="configs" 
+            name="config_name" 
+            id="config_name" 
+            placeholder="Type to search configs..." 
+            required
+        >
+        <datalist id="configs">
+            {% for name in config_names %}
+                <option value="{{ name }}">
+            {% endfor %}
+        </datalist>
       </div>
       <div class="form-row">
         <label for="current_firmware_update">Target Firmware</label>
