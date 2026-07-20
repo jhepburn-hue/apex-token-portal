@@ -269,7 +269,14 @@ def process():
             t = threading.Thread(target=background_pipeline_worker, args=(version_dir, tracking_key, update_type, None, False))
             t.daemon = True; t.start()
 
-            return render_template("loading.html", version=raw_version, filename_stem=target_ini_stem, update_type=update_type, firmware_build_id=selected_build_id)
+            return render_template(
+                "loading.html", 
+                version=raw_version, 
+                filename_stem=tracking_key,  
+                update_type=update_type, 
+                firmware_build_id=selected_build_id,
+                is_batch=False
+            )
         except Exception as e:
             return render_template("error.html", error=str(e), traceback_text=traceback.format_exc()), 500
 
