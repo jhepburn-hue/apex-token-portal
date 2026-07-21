@@ -22,43 +22,86 @@
     </div>
 
     <script>
-        const isBatch = {{ is_batch | tojson if is_batch is defined else false }};
-        let queryKey = "";
+    const isBatch = {{ is_batch | tojson if is_batch is defined else false }};
+    let queryKey = "";
 
-        if (isBatch) {
-            const stemsList = {{ batch_stems | tojson if batch_stems is defined else [] }};
-            queryKey = stemsList.join(",");
-        } else {
-            queryKey = "{{ filename_stem if filename_stem is defined else '' }}";
+    if (isBatch) {
+        const stemsList = {{ batch_stems | tojson if batch_stems is defined else [] }};
+        queryKey = stemsList.join(",");
+    } else {
+        queryKey = "{{ filename_stem if filename_stem is defined else '' }}";
+    }
+
+    // Client-side hard timeout settings (4 minutes = 240,000 ms)
+    const MAX_WAIT_TIME_MS = 240000; 
+    const startTime = Date.now();
+    let pollTimer = null;
+
+    function showErrorUI(errorMessage) {
+        // Stop the CSS spinner
+        const spinner = document.querySelector('.spinner');
+        if (spinner) spinner.style.display = 'none';
+
+        // Update card contents with error styling
+        document.querySelector('h2').innerText = "Generation Error";
+        document.querySelector('h2').style.color = "#f87171"; // Red text
+
+        const statusText = document.getElementById('status-text');
+        statusText.style.color = "#fca5a5";
+        statusText.innerText = errorMessage;
+
+        // Add a back button so the user isn't stuck
+        const card = document.querySelector('.card');
+        if (!document.getElementById('retry-btn')) {
+            const btn = document.createElement('a');
+            btn.id = 'retry-btn';
+            btn.href = "/";
+            btn.className = "btn primary";
+            btn.style.cssText = "display: inline-block; margin-top: 1.5rem; padding: 0.5rem 1rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 6px;";
+            btn.innerText = "← Try Again";
+            card.appendChild(btn);
         }
-        
-        function checkStatus() {
-            if (!queryKey) return;
-            
-            fetch(`/status/${encodeURIComponent(queryKey)}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.state) {
-                        document.getElementById('status-text').innerText = `Status: ${data.state}...`;
-                    }
-                    if (data.state === 'completed') {
-                        if (isBatch) {
-                            window.location.href = "/token_display_view?stems=" + encodeURIComponent(queryKey);
-                        } else {
-                            window.location.href = "/token_display_view?token=" + encodeURIComponent(data.token) + "&cached=false";
-                        }
-                    } else if (data.state === 'failed') {
-                        document.getElementById('status-text').innerText = "Failed: " + (data.error || "Unknown error");
+    }
+
+    function checkStatus() {
+        if (!queryKey) return;
+
+        if (Date.now() - startTime > MAX_WAIT_TIME_MS) {
+            showErrorUI("Build timed out after 4 minutes. Please check Forge or PocketBase logs and try again.");
+            return;
+        }
+
+        fetch(`/status/${encodeURIComponent(queryKey)}`)
+            .then(res => {
+                if (!res.ok) throw new Error(`HTTP Error ${res.status}`);
+                return res.json();
+            })
+            .then(data => {
+                if (data.state) {
+                    document.getElementById('status-text').innerText = `Status: ${data.state}...`;
+                }
+
+                if (data.state === 'completed') {
+                    if (isBatch) {
+                        window.location.href = "/token_display_view?stems=" + encodeURIComponent(queryKey);
                     } else {
-                        setTimeout(checkStatus, 3000);
+                        window.location.href = "/token_display_view?token=" + encodeURIComponent(data.token) + "&cached=false";
                     }
-                })
-                .catch(() => setTimeout(checkStatus, 3000));
-        }
-        
-        window.onload = function() {
-            setTimeout(checkStatus, 2000);
-        };
-    </script>
+                } else if (data.state === 'failed') {
+                    showErrorUI(data.error || "An unknown error occurred during build processing.");
+                } else {
+                    pollTimer = setTimeout(checkStatus, 3000);
+                }
+            })
+            .catch(err => {
+                console.error("Polling error:", err);
+                pollTimer = setTimeout(checkStatus, 3000);
+            });
+    }
+
+    window.onload = function() {
+        pollTimer = setTimeout(checkStatus, 2000);
+    };
+</script>
 </body>
 </html>

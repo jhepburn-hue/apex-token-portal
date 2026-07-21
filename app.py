@@ -258,21 +258,30 @@ def process():
             upload_to_gcs(generated_ini_path, update_type, version_dir)
             generated_ini_path.unlink(missing_ok=True)
 
-            build_resp = forge_client.trigger_config_build(
-                config_name=target_ini_stem, version=raw_version, firmware_build_id=selected_build_id,
-                firmware_source="Release", include_partials="1", gitlab_ref="DEVOPS-212-partial-config-builds"
-            )
-            if build_resp.status_code not in [200, 201, 303]: raise Exception(f"Forge Trigger Failed: {build_resp.text}")
-
             tracking_key = target_ini_stem.upper()
             JOBS[tracking_key] = {"state": "initializing", "token": None, "error": None}
-            t = threading.Thread(target=background_pipeline_worker, args=(version_dir, tracking_key, update_type, None, False))
-            t.daemon = True; t.start()
+
+            try:
+                build_resp = forge_client.trigger_config_build(
+                    config_name=target_ini_stem, version=raw_version, firmware_build_id=selected_build_id,
+                    firmware_source="Release", include_partials="1", gitlab_ref="DEVOPS-212-partial-config-builds"
+                )
+                if build_resp.status_code not in [200, 201, 303]: 
+                    raise Exception(f"Forge Trigger Failed ({build_resp.status_code}): {build_resp.text}")
+
+                t = threading.Thread(target=background_pipeline_worker, args=(version_dir, tracking_key, update_type, None, False))
+                t.daemon = True
+                t.start()
+            except Exception as e:
+                # Set status to failed so loading.html catches it immediately!
+                JOBS[tracking_key]["state"] = "failed"
+                JOBS[tracking_key]["error"] = str(e)
+                print(f"[Portal Error] {e}")
 
             return render_template(
                 "loading.html", 
                 version=raw_version, 
-                filename_stem=tracking_key,  
+                filename_stem=tracking_key, 
                 update_type=update_type, 
                 firmware_build_id=selected_build_id,
                 is_batch=False
@@ -335,26 +344,32 @@ def process():
                 if not local_csv_source.exists():
                     raise Exception(f"Configuration profile CSV not found locally: {task['config_designator']}.csv")
 
-                print(f"[Portal Backend] Importing CSV via Forge API for {task['config_designator']}...")
-                import_resp = forge_client.import_csv_config(local_csv_source, target_version=task['raw_version'])
-                if import_resp.status_code not in [200, 201, 303]:
-                    raise Exception(f"Forge CSV Import Failed ({import_resp.status_code}): {import_resp.text}")
-
-                print(f"[Portal Backend] Triggering apex-config build via Forge API...")
-                build_resp = forge_client.trigger_config_build(
-                    config_name=task['config_designator'], version=task['raw_version'], firmware_build_id=task['selected_build_id'],
-                    firmware_source="Release", include_partials="0"
-                )
-                if build_resp.status_code not in [200, 201, 303]:
-                    raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
-
                 JOBS[task['tracking_key']] = {"state": "initializing", "token": None, "error": None}
-                t = threading.Thread(
-                    target=background_pipeline_worker, 
-                    args=(task['version_dir'], task['tracking_key'], update_type, task['config_designator'], task['add_firmware_active'])
-                )
-                t.daemon = True
-                t.start()
+
+                try:
+                    print(f"[Portal Backend] Importing CSV via Forge API for {task['config_designator']}...")
+                    import_resp = forge_client.import_csv_config(local_csv_source, target_version=task['raw_version'])
+                    if import_resp.status_code not in [200, 201, 303]:
+                        raise Exception(f"Forge CSV Import Failed ({import_resp.status_code}): {import_resp.text}")
+
+                    print(f"[Portal Backend] Triggering apex-config build via Forge API...")
+                    build_resp = forge_client.trigger_config_build(
+                        config_name=task['config_designator'], version=task['raw_version'], firmware_build_id=task['selected_build_id'],
+                        firmware_source="Release", include_partials="0"
+                    )
+                    if build_resp.status_code not in [200, 201, 303]:
+                        raise Exception(f"Forge Build Trigger Failed ({build_resp.status_code}): {build_resp.text}")
+
+                    t = threading.Thread(
+                        target=background_pipeline_worker, 
+                        args=(task['version_dir'], task['tracking_key'], update_type, task['config_designator'], task['add_firmware_active'])
+                    )
+                    t.daemon = True
+                    t.start()
+                except Exception as e:
+                    JOBS[task['tracking_key']]["state"] = "failed"
+                    JOBS[task['tracking_key']]["error"] = str(e)
+                    print(f"[Portal Error] {e}")
 
             return render_template(
                 "loading.html", 
